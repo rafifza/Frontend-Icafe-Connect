@@ -3,11 +3,12 @@ import {SafeAreaView, StyleSheet} from 'react-native';
 import SignInScreen from './src/screens/signin/SignInScreen';
 import SignUpScreen from './src/screens/signup/SignUpScreen';
 import ForgotPasswordScreen from './src/screens/forgotpassword/ForgotPasswordScreen';
+import SearchScreen from './src/screens/search/SearchScreen';
 
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>
-     <ForgotPasswordScreen />
+      <SearchScreen />
     </SafeAreaView>
   );
 };
