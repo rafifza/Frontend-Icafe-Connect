@@ -6,11 +6,12 @@ import ForgotPasswordScreen from './src/screens/forgotpassword/ForgotPasswordScr
 import SearchScreen from './src/screens/search/SearchScreen';
 import IcafePage from './src/screens/icafe/IcafePage';
 import IcafeBilling from './src/screens/icafebilling/IcafeBilling';
+import Payment from './src/screens/payment/Payment';
 
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>
-      <IcafeBilling />
+      <Payment />
     </SafeAreaView>
   );
 };
