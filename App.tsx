@@ -7,11 +7,12 @@ import SearchScreen from './src/screens/search/SearchScreen';
 import IcafePage from './src/screens/icafe/IcafePage';
 import IcafeBilling from './src/screens/icafebilling/IcafeBilling';
 import Payment from './src/screens/payment/Payment';
+import HistoryPage from './src/screens/history/HistoryPage';
 
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>
-      <Payment />
+      <HistoryPage />
     </SafeAreaView>
   );
 };
@@ -19,7 +20,6 @@ const App = (): React.ReactElement => {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#00072B',
   },
