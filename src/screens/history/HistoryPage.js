@@ -101,10 +101,14 @@ export class HistoryPage extends Component {
         <View style={styles.header}>
           <Text style={styles.text}>History</Text>
         </View>
-        <View style={styles.scrollCont}>
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            {dummyData.map(this.renderHistoryItem)}
-          </ScrollView>
+        <View style={styles.contScroll}>
+          <View style={styles.scrollCont}>
+            <ScrollView
+              contentContainerStyle={styles.scrollContainer}
+              showsVerticalScrollIndicator={false}>
+              {dummyData.map(this.renderHistoryItem)}
+            </ScrollView>
+          </View>
         </View>
       </View>
     );
@@ -115,13 +119,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  contScroll: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+  },
   scrollCont: {
-    height: '80%',
+    width: '90%',
+    height: '85%',
   },
   scrollContainer: {
-    alignItems: 'center',
     paddingVertical: 20,
-    paddingHorizontal: '10%',
   },
   header: {
     width: '100%',
