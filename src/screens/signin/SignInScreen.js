@@ -31,12 +31,14 @@ const SignInScreen = () => {
         placeholder={'Username or email'}
         value={username}
         setValue={setUsername}
+        style={{width: '90%'}}
       />
       <CustomInput
         placeholder={'Password'}
         value={password}
         setValue={setPassword}
         secureTextEntry={true}
+        style={{width: '90%'}}
       />
       <View style={styles.forgotPasswordContainer}>
         <TouchableOpacity>
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
     marginTop: '15%',
   },
   forgotPasswordContainer: {
-    width: '80%',
+    width: '90%',
     alignItems: 'flex-end',
     marginTop: 10,
   },
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
   },
   signInButton: {
     backgroundColor: '#1B9DE2',
-    width: '80%',
+    width: '90%',
     paddingVertical: 10,
     marginTop: 20,
     borderRadius: 5,
