@@ -102,7 +102,7 @@ const style = StyleSheet.create({
     marginBottom: 20,
   },
   textOrderSummaryContainer: {
-    width: '80%',
+    width: '90%',
     marginBottom: 20,
   },
   orderSummaryText: {
@@ -134,7 +134,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   choosePaymentContainer: {
-    width: '80%',
+    width: '90%',
   },
   choosePaymentText: {
     color: 'white',
@@ -221,7 +221,6 @@ const style = StyleSheet.create({
     bottom: '15%',
     right: '10%',
     paddingVertical: 10,
-    paddingHorizontal: 20,
     borderRadius: 20,
   },
   continueButtonText: {

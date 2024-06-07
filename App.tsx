@@ -13,7 +13,7 @@ import AccountSetting from './src/screens/accountsetting/AccountSetting';
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>
-      <IcafePage />
+      <Payment />
     </SafeAreaView>
   );
 };
