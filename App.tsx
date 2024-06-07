@@ -9,11 +9,12 @@ import IcafeBilling from './src/screens/icafebilling/IcafeBilling';
 import Payment from './src/screens/payment/Payment';
 import HistoryPage from './src/screens/history/HistoryPage';
 import AccountSetting from './src/screens/accountsetting/AccountSetting';
+import Specification from './src/screens/specification/Specification';
 
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>
-      <HistoryPage />
+      <Specification />
     </SafeAreaView>
   );
 };

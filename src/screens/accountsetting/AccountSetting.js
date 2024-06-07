@@ -68,7 +68,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   profileContainer: {
-    width: '80%',
+    width: '90%',
     flexDirection: 'row',
     marginVertical: 40,
   },
@@ -113,7 +113,7 @@ const style = StyleSheet.create({
     height: 10,
   },
   settingContainer: {
-    width: '80%',
+    width: '90%',
   },
   languageContainer: {
     flexDirection: 'row',
