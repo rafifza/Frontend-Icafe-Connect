@@ -28,7 +28,12 @@ const ForgotPasswordScreen = () => {
       <Text style={styles.subtitle}>
         Please enter the email address associated with your account
       </Text>
-      <CustomInput placeholder={'Email'} value={email} setValue={setEmail} />
+      <CustomInput
+        placeholder={'Email'}
+        value={email}
+        setValue={setEmail}
+        style={{width: '90%'}}
+      />
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
@@ -54,18 +59,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     color: '#ffffff',
-    width: '80%',
+    width: '90%',
   },
   subtitle: {
     fontSize: 16,
     marginTop: 10,
     marginBottom: 10,
     color: '#ffffff',
-    width: '80%',
+    width: '90%',
   },
   submitButton: {
     backgroundColor: '#1B9DE2',
-    width: '80%',
+    width: '90%',
     paddingVertical: 10,
     borderRadius: 5,
     marginTop: 5,
