@@ -4,7 +4,7 @@ import cardImagePlaceholder from '../../../assets/images/Alcatraz.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
 import locationIcont from '../../../assets/images/Location.png';
-import searchIcon from '../../../assets/images/Search.png'; 
+import searchIcon from '../../../assets/images/Search.png';
 
 class SearchScreen extends Component {
   state = {
@@ -106,22 +106,27 @@ class SearchScreen extends Component {
             Jl. K. H. Syahdan No 9 Kemanggisan.
           </Text>
         </View>
-        <View style={styles.searchContainer}>
-          <Image source={searchIcon} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Search for iCafes"
-            placeholderTextColor="#FFFFFF"
-            value={this.state.searchQuery}
-            onChangeText={this.handleSearch}
+        <View style={styles.searchContainerWrapper}>
+          <View style={styles.searchContainer}>
+            <Image source={searchIcon} style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Search for iCafes"
+              placeholderTextColor="#FFFFFF"
+              value={this.state.searchQuery}
+              onChangeText={this.handleSearch}
+            />
+          </View>
+        </View>
+        <View style={styles.listContainer}>
+          <FlatList
+            data={this.state.data}
+            renderItem={this.renderItem}
+            keyExtractor={item => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContent}
           />
         </View>
-        <FlatList
-          data={this.state.data}
-          renderItem={this.renderItem}
-          keyExtractor={item => item.id}
-          showsVerticalScrollIndicator={false}
-        />
       </View>
     );
   }
@@ -130,11 +135,13 @@ class SearchScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '85%',
+    width: '100%',
+    justifyContent: 'center',
   },
   topContainer: {
     flexDirection: 'row',
     marginVertical: 10,
+    marginLeft: 20,
   },
   location: {
     fontSize: 18,
@@ -146,14 +153,20 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: '#AAAAAA',
     marginBottom: 10,
+    marginLeft: 20,
+  },
+  searchContainerWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 20,
-    marginBottom: 20,
     paddingHorizontal: 10,
+    width: '90%',
   },
   searchIcon: {
     width: 20,
@@ -166,6 +179,16 @@ const styles = StyleSheet.create({
     height: 40,
     color: '#FFFFFF',
   },
+  listContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  listContent: {
+    alignItems: 'center',
+    width: '100%',
+  },
   card: {
     flexDirection: 'row',
     backgroundColor: '#f0f0f0',
@@ -173,6 +196,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    width: '90%',
   },
   cardImage: {
     width: 130,
