@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
+    alignItems: 'center',
   },
   imageCardContainer: {
     width: '100%',
@@ -115,22 +116,22 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   pcCategoriesContainer: {
-    width: '80%',
+    width: '90%',
     marginVertical: 5,
   },
   pcCategoriesText: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 17,
     textAlign: 'left',
-    marginLeft: '13%',
     fontWeight: '800',
   },
   billingContainer: {
-    width: '100%',
-    paddingHorizontal: '10%',
+    width: '90%',
+    alignItems: 'center',
     marginVertical: 10,
   },
   billingClassContainer: {
+    width: '100%',
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   billingText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#FFFFFF',
     marginTop: 5,
   },
