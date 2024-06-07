@@ -53,29 +53,39 @@ const SignUpScreen = ({navigation}) => {
         placeholder={'Full Name'}
         value={fullName}
         setValue={setFullName}
+        style={{width: '90%'}}
       />
       <CustomInput
         placeholder={'Username'}
         value={username}
         setValue={setUsername}
+        style={{width: '90%'}}
       />
-      <CustomInput placeholder={'Email'} value={email} setValue={setEmail} />
+      <CustomInput
+        placeholder={'Email'}
+        value={email}
+        setValue={setEmail}
+        style={{width: '90%'}}
+      />
       <CustomInput
         placeholder={'Phone Number'}
         value={phoneNumber}
         setValue={setPhoneNumber}
+        style={{width: '90%'}}
       />
       <CustomInput
         placeholder={'Password'}
         value={password}
         setValue={setPassword}
         secureTextEntry={true}
+        style={{width: '90%'}}
       />
       <CustomInput
         placeholder={'Confirm Password'}
         value={confirmPassword}
         setValue={setConfirmPassword}
         secureTextEntry={true}
+        style={{width: '90%'}}
       />
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignIn}>
         <Text style={styles.signUpButtonText}>Sign Up</Text>
@@ -117,7 +127,7 @@ const styles = StyleSheet.create({
   },
   signUpButton: {
     backgroundColor: '#1B9DE2',
-    width: '80%',
+    width: '90%',
     paddingVertical: 10,
     marginTop: 20,
     borderRadius: 5,
