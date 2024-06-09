@@ -5,6 +5,7 @@ import {
   View,
   FlatList,
   Image,
+  Modal,
 } from 'react-native';
 import React, {Component} from 'react';
 import xIcon from '../../../assets/images/X.png';
@@ -53,10 +54,22 @@ const dummyData = [
   // Add more dummy data as needed
 ];
 
-export class UnbindAccount extends Component {
-  deleteItem = id => {
-    // Implement the delete functionality here
+class UnbindAccount extends Component {
+  state = {
+    modalVisible: false,
+    selectedItem: null,
+  };
+
+  toggleModal = item => {
+    this.setState({modalVisible: !this.state.modalVisible, selectedItem: item});
+  };
+
+  confirmDeleteItem = () => {
+    const {selectedItem} = this.state;
+    // Implement the actual delete functionality here
     // For example, you could update the state to remove the item
+    console.log(`Deleted item with id ${selectedItem.id}`);
+    this.toggleModal(null);
   };
 
   renderItem = ({item}) => (
@@ -72,13 +85,14 @@ export class UnbindAccount extends Component {
       </View>
       <TouchableOpacity
         style={style.deleteButton}
-        onPress={() => this.deleteItem(item.id)}>
+        onPress={() => this.toggleModal(item)}>
         <Image source={xIcon} style={style.deleteButtonImage} />
       </TouchableOpacity>
     </View>
   );
 
   render() {
+    const {modalVisible, selectedItem} = this.state;
     return (
       <View style={style.container}>
         <View style={style.containerContent}>
@@ -91,9 +105,37 @@ export class UnbindAccount extends Component {
               renderItem={this.renderItem}
               keyExtractor={item => item.id.toString()}
               contentContainerStyle={style.listContainer}
+              showsVerticalScrollIndicator={false}
             />
           </View>
         </View>
+        {selectedItem && (
+          <Modal
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => this.toggleModal(null)}>
+            <View style={style.modalBackground}>
+              <View style={style.modalContainer}>
+                <Text style={style.modalMessage}>
+                  Are you sure you want to unbind {selectedItem.icafeName}{' '}
+                  account?
+                </Text>
+                <View style={style.modalButtons}>
+                  <TouchableOpacity
+                    style={[style.modalButton, style.cancelButton]}
+                    onPress={() => this.toggleModal(null)}>
+                    <Text style={style.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[style.modalButton, style.confirmButton]}
+                    onPress={this.confirmDeleteItem}>
+                    <Text style={style.buttonText}>OK</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
       </View>
     );
   }
@@ -166,6 +208,51 @@ const style = StyleSheet.create({
     width: 20,
     height: 20,
     tintColor: 'white',
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '80%',
+    backgroundColor: '#00072B',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalMessage: {
+    fontSize: 16,
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: '700',
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 10,
+  },
+  modalButton: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 5,
+  },
+  cancelButton: {
+    backgroundColor: 'grey',
+    marginRight: 10,
+    borderRadius: 20,
+  },
+  confirmButton: {
+    backgroundColor: '#277CC6',
+    borderRadius: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
