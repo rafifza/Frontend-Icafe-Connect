@@ -10,11 +10,13 @@ import Payment from './src/screens/payment/Payment';
 import HistoryPage from './src/screens/history/HistoryPage';
 import AccountSetting from './src/screens/accountsetting/AccountSetting';
 import Specification from './src/screens/specification/Specification';
+import EditProfilePage from './src/screens/editprofile/EditProfilePage';
+import UnbindAccount from './src/screens/unbindaccount/UnbindAccount';
 
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>
-      <Specification />
+      <UnbindAccount />
     </SafeAreaView>
   );
 };
