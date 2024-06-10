@@ -1,25 +1,31 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import SignInScreen from './src/screens/signin/SignInScreen';
-import SignUpScreen from './src/screens/signup/SignUpScreen';
-import ForgotPasswordScreen from './src/screens/forgotpassword/ForgotPasswordScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Dashboard from './src/screens/dashboard/Dashboard';
 import SearchScreen from './src/screens/search/SearchScreen';
-import IcafePage from './src/screens/icafe/IcafePage';
-import IcafeBilling from './src/screens/icafebilling/IcafeBilling';
-import Payment from './src/screens/payment/Payment';
 import HistoryPage from './src/screens/history/HistoryPage';
 import AccountSetting from './src/screens/accountsetting/AccountSetting';
-import Specification from './src/screens/specification/Specification';
-import EditProfilePage from './src/screens/editprofile/EditProfilePage';
-import UnbindAccount from './src/screens/unbindaccount/UnbindAccount';
-import ChangePassword from './src/screens/changepassword/ChangePassword';
-import Dashboard from './src/screens/dashboard/Dashboard';
 
+const Tab = createBottomTabNavigator();
+
+function MyTabs() {
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="Home" component={Dashboard} />
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="History" component={HistoryPage} />
+      <Tab.Screen name="User" component={AccountSetting} />
+    </Tab.Navigator>
+  );
+}
 
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>
-      <Dashboard />
+      <NavigationContainer>
+        <MyTabs />
+      </NavigationContainer>
     </SafeAreaView>
   );
 };
@@ -27,7 +33,6 @@ const App = (): React.ReactElement => {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    justifyContent: 'center',
     backgroundColor: '#00072B',
   },
 });
