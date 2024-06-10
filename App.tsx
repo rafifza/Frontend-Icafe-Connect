@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import SignInScreen from './src/screens/signin/SignInScreen';
 import SignUpScreen from './src/screens/signup/SignUpScreen';
 import ForgotPasswordScreen from './src/screens/forgotpassword/ForgotPasswordScreen';
@@ -12,11 +12,14 @@ import AccountSetting from './src/screens/accountsetting/AccountSetting';
 import Specification from './src/screens/specification/Specification';
 import EditProfilePage from './src/screens/editprofile/EditProfilePage';
 import UnbindAccount from './src/screens/unbindaccount/UnbindAccount';
+import ChangePassword from './src/screens/changepassword/ChangePassword';
+import Dashboard from './src/screens/dashboard/Dashboard';
+
 
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>
-      <UnbindAccount />
+      <Dashboard />
     </SafeAreaView>
   );
 };
