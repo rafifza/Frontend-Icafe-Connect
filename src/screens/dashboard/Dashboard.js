@@ -7,8 +7,6 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {ImageSlider} from 'react-native-image-slider-banner';
-import {NavigationContainer} from '@react-navigation/native';
 import searchIcon from '../../../assets/images/Search.png';
 import promoImage from '../../../assets/images/Promo.jpeg';
 import walletImage from '../../../assets/images/Wallet.png';
@@ -43,14 +41,16 @@ export class Dashboard extends Component {
     return (
       <View style={style.container}>
         <View style={style.contentContainer}>
-          <Text style={style.helloText}>Hello User</Text>
+          <Text style={style.helloText}>
+            Hello <Text style={{fontWeight: 'bold'}}>MANAAAA</Text>
+          </Text>
           <View style={style.inputContainer}>
             <Image source={searchIcon} style={style.inputIcon} />
             <TextInput
               style={style.input}
               placeholder="Search for iCafe"
               placeholderTextColor="#FFFFFF"
-              secureTextEntry={true}
+              secureTextEntry={false}
             />
           </View>
           <View style={style.promoImageContainer}>
@@ -117,7 +117,7 @@ const style = StyleSheet.create({
   },
   helloText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: 'white',
   },
   inputContainer: {
@@ -133,6 +133,10 @@ const style = StyleSheet.create({
     height: 24,
     marginRight: 10,
     marginLeft: 5,
+  },
+  input: {
+    flex: 1,
+    color: '#FFFFFF', // To ensure the text is visible on a dark background
   },
   promoImageContainer: {
     marginVertical: 20,
@@ -202,7 +206,8 @@ const style = StyleSheet.create({
   icafeImage: {
     width: '100%',
     height: '50%',
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   icafeNameContainer: {
     marginHorizontal: 10,

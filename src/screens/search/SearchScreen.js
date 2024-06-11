@@ -3,7 +3,7 @@ import {StyleSheet, Text, TextInput, View, FlatList, Image} from 'react-native';
 import cardImagePlaceholder from '../../../assets/images/Alcatraz.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
-import locationIcont from '../../../assets/images/Location.png';
+import locationIcon from '../../../assets/images/Location.png';
 import searchIcon from '../../../assets/images/Search.png';
 
 class SearchScreen extends Component {
@@ -99,7 +99,7 @@ class SearchScreen extends Component {
       <View style={styles.container}>
         <View style={styles.topContainer}>
           <Text style={styles.location}>Your Location</Text>
-          <Image source={locationIcont} style={styles.infoIconStar} />
+          <Image source={locationIcon} style={styles.infoIconStar} />
         </View>
         <View>
           <Text style={styles.locationText}>
@@ -136,13 +136,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     backgroundColor: '#00072B',
   },
   topContainer: {
     flexDirection: 'row',
     marginVertical: 10,
     marginLeft: 20,
+    alignItems: 'center',
   },
   location: {
     fontSize: 18,
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   searchIcon: {
     width: 20,
     height: 20,
-    tintColor: '#FFFFFF', // Make the icon white
+    tintColor: '#FFFFFF', 
     marginRight: 10,
   },
   searchBar: {
@@ -182,21 +183,18 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     width: '100%',
   },
   listContent: {
     alignItems: 'center',
-    width: '100%',
+    paddingBottom: 20,
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
     marginBottom: 10,
     borderRadius: 10,
     padding: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
     width: '90%',
   },
   cardImage: {
