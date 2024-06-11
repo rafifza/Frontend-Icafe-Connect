@@ -99,9 +99,9 @@ export class HistoryPage extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.text}>History</Text>
+          <Text style={styles.title}>History</Text>
         </View>
-        <View style={styles.contScroll}>
+        <View style={styles.containerWrapper}>
           <View style={styles.scrollCont}>
             <ScrollView
               contentContainerStyle={styles.scrollContainer}
@@ -119,32 +119,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#00072B',
+    alignItems: 'center',
   },
-  contScroll: {
+  header: {
+    width: '90%',
+    marginVertical: 20,
+    alignItems: 'flex-start',
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  containerWrapper: {
     flex: 1,
-    width: '100%',
+    width: '90%',
     alignItems: 'center',
   },
   scrollCont: {
-    width: '90%',
+    flex: 1,
+    width: '100%',
   },
   scrollContainer: {
     paddingVertical: 20,
   },
-  header: {
-    width: '100%',
-    paddingVertical: 20,
-    paddingHorizontal: '10%',
-    backgroundColor: '#00072B',
-  },
   containerContent: {
     width: '100%',
     marginVertical: 10,
-  },
-  text: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: 'white',
   },
   containerContents: {
     width: '100%',
