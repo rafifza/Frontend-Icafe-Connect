@@ -118,6 +118,7 @@ export class HistoryPage extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#00072B',
   },
   contScroll: {
     flex: 1,

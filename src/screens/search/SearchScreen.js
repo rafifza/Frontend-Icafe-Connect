@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     justifyContent: 'center',
+    backgroundColor: '#00072B',
   },
   topContainer: {
     flexDirection: 'row',

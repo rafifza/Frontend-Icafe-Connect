@@ -66,6 +66,7 @@ const style = StyleSheet.create({
     flex: 1,
     width: '100%',
     alignItems: 'center',
+    backgroundColor: '#00072B',
   },
   profileContainer: {
     width: '90%',
