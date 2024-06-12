@@ -42,7 +42,9 @@ export class AccountSetting extends Component {
             <Image source={privacyIcon} style={style.languageIcon} />
             <Text style={style.privacyText}>Change Password</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={style.languageContainer}>
+          <TouchableOpacity
+            style={style.languageContainer}
+            onPress={() => this.props.navigation.navigate('Unbind Account')}>
             <Image source={userIcon} style={style.languageIcon} />
             <Text style={style.unbindText}>Unbind Account</Text>
           </TouchableOpacity>
