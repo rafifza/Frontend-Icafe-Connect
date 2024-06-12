@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import { SafeAreaView, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,14 +7,17 @@ import Dashboard from './src/screens/dashboard/Dashboard';
 import SearchScreen from './src/screens/search/SearchScreen';
 import HistoryPage from './src/screens/history/HistoryPage';
 import AccountSetting from './src/screens/accountsetting/AccountSetting';
-
-// Import your custom icons
 import HomeIcon from './assets/images/Home.png';
 import SearchIcon from './assets/images/Search.png';
 import HistoryIcon from './assets/images/History.png';
 import UserIcon from './assets/images/User.png';
+import EditProfilePage from './src/screens/editprofile/EditProfilePage';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+
 
 function MyTabs() {
   return (
@@ -47,11 +51,19 @@ function MyTabs() {
       <Tab.Screen name="Home" component={Dashboard} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="History" component={HistoryPage} />
-      <Tab.Screen name="User" component={AccountSetting} />
+      <Tab.Screen name="User" component={Profile} />
     </Tab.Navigator>
   );
 }
 
+function Profile() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="AccountSetting" component={AccountSetting} />
+      <Stack.Screen name="Edit Profile" component={EditProfilePage} />
+    </Stack.Navigator>
+  );
+}
 const App = (): React.ReactElement => {
   return (
     <SafeAreaView style={styles.root}>

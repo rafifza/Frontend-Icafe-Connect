@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  BackHandler,
 } from 'react-native';
 import React, {Component} from 'react';
 import profileImage from '../../../assets/images/GamerParadise.png';
@@ -15,6 +16,24 @@ import emailIcon from '../../../assets/images/Email.png';
 import phoneIcon from '../../../assets/images/Phone.png';
 
 export class EditProfilePage extends Component {
+  componentDidMount() {
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+  }
+
+  componentWillUnmount() {
+    if (this.backHandler) {
+      this.backHandler.remove();
+    }
+  }
+
+  handleBackPress = () => {
+    const {navigation} = this.props;
+    navigation.goBack();
+    return true;
+  };
   render() {
     return (
       <View style={style.container}>

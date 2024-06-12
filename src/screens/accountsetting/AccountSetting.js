@@ -11,6 +11,7 @@ import privacyIcon from '../../../assets/images/privacy.png';
 
 export class AccountSetting extends Component {
   render() {
+    const {navigation} = this.props;
     return (
       <View style={style.container}>
         <View style={style.profileContainer}>
@@ -18,8 +19,14 @@ export class AccountSetting extends Component {
           <View style={style.textProfileContainer}>
             <Text style={style.namaText}>Full Name</Text>
             <Text style={style.emailText}>username@gmail.com</Text>
-            <TouchableOpacity style={style.editProfileContainer}>
-              <Text style={style.editProfileText}>Edit profile</Text>
+            <TouchableOpacity
+              style={style.editProfileContainer}
+              onPress={() => this.props.navigation.navigate('Edit Profile')}>
+              <Text
+                style={style.editProfileText}
+                onPress={() => navigation.navigate('Edit Profile')}>
+                Edit profile
+              </Text>
               <Image source={arrowIcon} style={style.arrowIcon} />
             </TouchableOpacity>
           </View>
