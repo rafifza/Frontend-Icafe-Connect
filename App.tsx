@@ -13,6 +13,7 @@ import HistoryIcon from './assets/images/History.png';
 import UserIcon from './assets/images/User.png';
 import EditProfilePage from './src/screens/editprofile/EditProfilePage';
 import { createStackNavigator } from '@react-navigation/stack';
+import ChangePassword from './src/screens/changepassword/ChangePassword';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -61,6 +62,7 @@ function Profile() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AccountSetting" component={AccountSetting} />
       <Stack.Screen name="Edit Profile" component={EditProfilePage} />
+      <Stack.Screen name="Change Password" component={ChangePassword} />
     </Stack.Navigator>
   );
 }

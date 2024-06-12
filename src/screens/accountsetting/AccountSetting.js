@@ -33,16 +33,14 @@ export class AccountSetting extends Component {
         </View>
         <View style={style.settingContainer}>
           <TouchableOpacity style={style.languageContainer}>
-            <Image source={languageIcon} style={style.languageIcon} />
-            <Text style={style.langText}>Language</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.languageContainer}>
             <Image source={notificationIcon} style={style.languageIcon} />
             <Text style={style.notificationText}>Notifications</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={style.languageContainer}>
+          <TouchableOpacity
+            style={style.languageContainer}
+            onPress={() => this.props.navigation.navigate('Change Password')}>
             <Image source={privacyIcon} style={style.languageIcon} />
-            <Text style={style.privacyText}>Privacy & Security</Text>
+            <Text style={style.privacyText}>Change Password</Text>
           </TouchableOpacity>
           <TouchableOpacity style={style.languageContainer}>
             <Image source={userIcon} style={style.languageIcon} />
