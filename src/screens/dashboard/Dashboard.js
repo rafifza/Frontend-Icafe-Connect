@@ -68,9 +68,16 @@ export class Dashboard extends Component {
               </View>
               <Text style={style.balanceText}>RP. 100.000</Text>
             </View>
+
             <View style={style.topUpHistoryContainer}>
-              <Image source={topUpIcon} style={style.topUpIcon} />
-              <Image source={historyIcon} style={style.historyIcon} />
+              <View style={style.topupContainer}>
+                <Image source={topUpIcon} style={style.topUpIcon} />
+                <Text style={style.topUpText}>Top Up</Text>
+              </View>
+              <View style={style.historyContainer}>
+                <Image source={historyIcon} style={style.historyIcon} />
+                <Text style={style.historyText}>History</Text>
+              </View>
             </View>
           </View>
           <View style={style.featuredContainer}>
@@ -136,7 +143,7 @@ const style = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: '#FFFFFF', // To ensure the text is visible on a dark background
+    color: '#FFFFFF',
   },
   promoImageContainer: {
     marginVertical: 20,
@@ -178,14 +185,30 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  topupContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginRight: 20,
+  },
   topUpIcon: {
-    width: 43,
-    height: 43,
-    marginRight: 10,
+    width: 36,
+    height: 36,
+  },
+  topUpText: {
+    color: 'white',
+    fontWeight: '700',
+  },
+  historyContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   historyIcon: {
-    width: 43,
-    height: 43,
+    width: 36,
+    height: 36,
+  },
+  historyText: {
+    color: 'white',
+    fontWeight: '700',
   },
   featuredContainer: {
     marginVertical: 20,
