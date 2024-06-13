@@ -48,7 +48,9 @@ export class AccountSetting extends Component {
             <Image source={userIcon} style={style.languageIcon} />
             <Text style={style.unbindText}>Unbind Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={style.languageContainer}>
+          <TouchableOpacity
+            style={style.languageContainer}
+            onPress={() => this.props.navigation.navigate('Help Support')}>
             <Image source={supportIcon} style={style.languageIcon} />
             <Text style={style.supportText}>Help and Support</Text>
           </TouchableOpacity>
