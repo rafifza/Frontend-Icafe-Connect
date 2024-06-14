@@ -1,4 +1,11 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
 import React, {Component} from 'react';
 import profilPicture from '../../../assets/images/GamerParadise.png';
 import arrowIcon from '../../../assets/images/Arrow.png';
@@ -10,8 +17,17 @@ import aboutIcon from '../../../assets/images/about.png';
 import privacyIcon from '../../../assets/images/privacy.png';
 
 export class AccountSetting extends Component {
+  state = {
+    isModalVisible: false,
+  };
+
+  toggleModal = () => {
+    this.setState({isModalVisible: !this.state.isModalVisible});
+  };
+
   render() {
     const {navigation} = this.props;
+    const {isModalVisible} = this.state;
     return (
       <View style={style.container}>
         <View style={style.profileContainer}>
@@ -32,10 +48,6 @@ export class AccountSetting extends Component {
           </View>
         </View>
         <View style={style.settingContainer}>
-          <TouchableOpacity style={style.languageContainer}>
-            <Image source={notificationIcon} style={style.languageIcon} />
-            <Text style={style.notificationText}>Notifications</Text>
-          </TouchableOpacity>
           <TouchableOpacity
             style={style.languageContainer}
             onPress={() => this.props.navigation.navigate('Change Password')}>
@@ -54,17 +66,43 @@ export class AccountSetting extends Component {
             <Image source={supportIcon} style={style.languageIcon} />
             <Text style={style.supportText}>Help and Support</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={style.languageContainer}>
-            <Image source={aboutIcon} style={style.languageIcon} />
-            <Text style={style.aboutText}>About</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.deleteContainer}>
-            <Text style={style.aboutText}>Delete Account</Text>
+          <TouchableOpacity
+            style={style.deleteContainer}
+            onPress={this.toggleModal}>
+            <Text style={style.aboutText}>Disable Account</Text>
           </TouchableOpacity>
           <TouchableOpacity style={style.logoutContainer}>
             <Text style={style.aboutText}>Log out</Text>
           </TouchableOpacity>
         </View>
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={isModalVisible}
+          onRequestClose={this.toggleModal}>
+          <View style={style.modalContainer}>
+            <View style={style.modalContent}>
+              <Text style={style.modalText}>
+                Are you sure you want to disable your account?
+              </Text>
+              <View style={style.modalButtonContainer}>
+                <TouchableOpacity
+                  style={style.modalButton}
+                  onPress={this.toggleModal}>
+                  <Text style={style.modalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[style.modalButton, style.modalButtonDisable]}
+                  onPress={() => {
+                    this.toggleModal();
+                    console.log('Account Disabled');
+                  }}>
+                  <Text style={style.modalButtonText}>Disable</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -145,12 +183,6 @@ const style = StyleSheet.create({
     marginLeft: 5,
     fontWeight: '600',
   },
-  notificationText: {
-    color: 'white',
-    fontSize: 15,
-    marginLeft: 5,
-    fontWeight: '600',
-  },
   privacyText: {
     color: 'white',
     fontSize: 15,
@@ -181,6 +213,7 @@ const style = StyleSheet.create({
     paddingVertical: 5,
     backgroundColor: '#450a0a',
     borderRadius: 10,
+    marginTop: 230,
   },
   logoutContainer: {
     justifyContent: 'center',
@@ -188,6 +221,47 @@ const style = StyleSheet.create({
     paddingVertical: 5,
     backgroundColor: '#3F414D',
     borderRadius: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: '#00072B',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    color: 'white',
+    fontWeight: '700',
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginHorizontal: 10,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  modalButtonDisable: {
+    backgroundColor: '#277CC6',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 
