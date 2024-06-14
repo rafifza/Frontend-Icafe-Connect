@@ -16,6 +16,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ChangePassword from './src/screens/changepassword/ChangePassword';
 import UnbindAccount from './src/screens/unbindaccount/UnbindAccount';
 import HelpSupport from './src/screens/helpsupport/HelpSupport';
+import IcafePage from './src/screens/icafe/IcafePage';
+import EwalletHistory from './src/screens/ewallethistory/EwalletHistory';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -51,12 +53,22 @@ function MyTabs() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={Dashboard} />
+      <Tab.Screen name="Home" component={Homepage} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="History" component={HistoryPage} />
       <Tab.Screen name="User" component={Profile} />
     </Tab.Navigator>
   );
+}
+
+function Homepage() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Dashboard" component={Dashboard} />
+      <Stack.Screen name="Icafe Page" component={IcafePage} />
+      <Stack.Screen name="Ewallet History" component={EwalletHistory} />
+    </Stack.Navigator>
+  )
 }
 
 function Profile() {
@@ -68,7 +80,7 @@ function Profile() {
       <Stack.Screen name="Unbind Account" component={UnbindAccount} />
       <Stack.Screen name="Help Support" component={HelpSupport} />
     </Stack.Navigator>
-  );
+  )
 }
 const App = (): React.ReactElement => {
   return (

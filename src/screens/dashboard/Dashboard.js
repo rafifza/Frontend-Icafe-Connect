@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import searchIcon from '../../../assets/images/Search.png';
@@ -37,7 +38,7 @@ export class Dashboard extends Component {
 
     // Example promo images
     const promoImages = [promoImage, promoImage, promoImage, promoImage];
-
+    const {navigation} = this.props;
     return (
       <View style={style.container}>
         <View style={style.contentContainer}>
@@ -74,17 +75,22 @@ export class Dashboard extends Component {
                 <Image source={topUpIcon} style={style.topUpIcon} />
                 <Text style={style.topUpText}>Top Up</Text>
               </View>
-              <View style={style.historyContainer}>
+              <TouchableOpacity
+                style={style.historyContainer}
+                onPress={() => navigation.navigate('Ewallet History')}>
                 <Image source={historyIcon} style={style.historyIcon} />
                 <Text style={style.historyText}>History</Text>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
           <View style={style.featuredContainer}>
             <Text style={style.featuredText}>Featured iCafes</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {iCafeData.map((iCafe, index) => (
-                <View style={style.icafeContainer} key={index}>
+                <TouchableOpacity
+                  style={style.icafeContainer}
+                  key={index}
+                  onPress={() => navigation.navigate('Icafe Page')}>
                   <Image source={icafeImage} style={style.icafeImage} />
                   <View style={style.icafeNameContainer}>
                     <Text style={style.icafeName}>{iCafe.name}</Text>
@@ -102,7 +108,7 @@ export class Dashboard extends Component {
                       </Text>
                     </View>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
