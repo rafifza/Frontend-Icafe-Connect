@@ -12,6 +12,7 @@ import axios from 'axios';
 import Logo from '../../../assets/images/Logo.png';
 import CustomInput from '../../components/custominputs/CustomInput';
 import {API_URL} from '@env';
+import ip from '../../../ip';
 
 const SignUpScreen = ({navigation}) => {
   const [fullName, setFullName] = useState('');
@@ -44,7 +45,7 @@ const SignUpScreen = ({navigation}) => {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/loginpage/register`, {
+      const response = await axios.post(`${ip}/loginpage/register`, {
         username: username,
         password: password,
         email: email,

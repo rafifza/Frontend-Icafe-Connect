@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -8,8 +9,55 @@ import {
 } from 'react-native';
 import React, {Component} from 'react';
 import passwordIcon from '../../../assets/images/Password.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import ip from '../../../ip';
 
 export class ChangePassword extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    };
+  }
+
+  handleChangePassword = async () => {
+    const {oldPassword, newPassword, confirmPassword} = this.state;
+    const userId = await AsyncStorage.getItem('userid');
+
+    if (!userId) {
+      Alert.alert('Error', 'User ID not found');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'New passwords do not match');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${ip}/settingspage/changePassword`, {
+        userId,
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      });
+
+      const result = response.data;
+
+      if (result.success) {
+        Alert.alert('Success', 'Password updated successfully');
+      } else {
+        Alert.alert('Error', result.message);
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      Alert.alert('Error', 'An error occurred while changing the password');
+    }
+  };
+
   render() {
     return (
       <View style={style.container}>
@@ -24,6 +72,8 @@ export class ChangePassword extends Component {
               placeholder="Old Password"
               placeholderTextColor="#FFFFFF"
               secureTextEntry={true}
+              value={this.state.oldPassword}
+              onChangeText={text => this.setState({oldPassword: text})}
             />
           </View>
           <View style={style.inputContainer}>
@@ -33,6 +83,8 @@ export class ChangePassword extends Component {
               placeholder="New Password"
               placeholderTextColor="#FFFFFF"
               secureTextEntry={true}
+              value={this.state.newPassword}
+              onChangeText={text => this.setState({newPassword: text})}
             />
           </View>
           <View style={style.inputContainer}>
@@ -42,10 +94,14 @@ export class ChangePassword extends Component {
               placeholder="Confirm New Password"
               placeholderTextColor="#FFFFFF"
               secureTextEntry={true}
+              value={this.state.confirmPassword}
+              onChangeText={text => this.setState({confirmPassword: text})}
             />
           </View>
         </View>
-        <TouchableOpacity style={style.saveButton}>
+        <TouchableOpacity
+          style={style.saveButton}
+          onPress={this.handleChangePassword}>
           <Text style={style.saveButtonText}>Change Password</Text>
         </TouchableOpacity>
       </View>
