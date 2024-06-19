@@ -1,3 +1,4 @@
+import React, {Component} from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,8 +7,11 @@ import {
   TouchableOpacity,
   View,
   BackHandler,
+  Alert,
 } from 'react-native';
-import React, {Component} from 'react';
+import axios from 'axios';
+import ip from '../../../ip';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import profileImage from '../../../assets/images/GamerParadise.png';
 import editIcon from '../../../assets/images/Camera.png';
 import fullNameIcon from '../../../assets/images/Fullname-Username.png';
@@ -16,11 +20,20 @@ import emailIcon from '../../../assets/images/Email.png';
 import phoneIcon from '../../../assets/images/Phone.png';
 
 export class EditProfilePage extends Component {
+  state = {
+    fullname: '',
+    username: '',
+    email: '',
+    phone: '',
+  };
+
   componentDidMount() {
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.handleBackPress,
     );
+
+    this.fetchUserProfile();
   }
 
   componentWillUnmount() {
@@ -34,65 +47,130 @@ export class EditProfilePage extends Component {
     navigation.goBack();
     return true;
   };
+
+  fetchUserProfile = async () => {
+    const userId = await AsyncStorage.getItem('userid'); // Fetch user ID from AsyncStorage or wherever it's stored
+    if (!userId) {
+      Alert.alert('Error', 'User ID not found');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${ip}/settingspage/getUserProfile`, {
+        params: {userId},
+      });
+
+      if (response.data.success) {
+        const {fullname, username, email, phone} = response.data.userDetails;
+        this.setState({fullname, username, email, phone});
+      } else {
+        Alert.alert('Error', 'Failed to fetch user profile');
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      Alert.alert('Error', 'An error occurred while fetching user profile');
+    }
+  };
+
+  updateUserProfile = async () => {
+    const {fullname, username, email, phone} = this.state;
+    const userId = await AsyncStorage.getItem('userid');
+    if (!userId) {
+      Alert.alert('Error', 'User ID not found');
+      return;
+    }
+
+    try {
+      const response = await axios.put(`${ip}/settingspage/updateUser`, {
+        userId,
+        fullname,
+        username,
+        email,
+        phone,
+      });
+
+      if (response.data.success) {
+        Alert.alert('Success', 'User profile updated successfully');
+      } else {
+        Alert.alert('Error', 'Failed to update user profile');
+      }
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      Alert.alert('Error', 'An error occurred while updating user profile');
+    }
+  };
+
   render() {
+    const {fullname, username, email, phone} = this.state;
+
     return (
-      <View style={style.container}>
-        <View style={style.titleContainer}>
-          <Text style={style.titleText}>Edit Profile</Text>
+      <View style={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>Edit Profile</Text>
         </View>
-        <View style={style.profileContainer}>
-          <TouchableOpacity style={style.profileImageContainer}>
-            <Image source={profileImage} style={style.profileImage} />
-            <TouchableOpacity style={style.editIconContainer}>
-              <Image source={editIcon} style={style.editIcon} />
+        <View style={styles.profileContainer}>
+          <TouchableOpacity style={styles.profileImageContainer}>
+            <Image source={profileImage} style={styles.profileImage} />
+            <TouchableOpacity style={styles.editIconContainer}>
+              <Image source={editIcon} style={styles.editIcon} />
             </TouchableOpacity>
           </TouchableOpacity>
         </View>
-        <View style={style.formContainer}>
-          <View style={style.inputContainer}>
-            <Image source={fullNameIcon} style={style.inputIcon} />
+        <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <Image source={fullNameIcon} style={styles.inputIcon} />
             <TextInput
-              style={style.input}
+              style={styles.input}
               placeholder="Full Name"
               placeholderTextColor="#FFFFFF"
+              value={fullname}
+              onChangeText={text => this.setState({fullname: text})}
             />
           </View>
-          <View style={style.inputContainer}>
-            <Image source={usernameIcon} style={style.inputIcon} />
+          <View style={styles.inputContainer}>
+            <Image source={usernameIcon} style={styles.inputIcon} />
             <TextInput
-              style={style.input}
+              style={styles.input}
               placeholder="Username"
               placeholderTextColor="#FFFFFF"
+              value={username}
+              onChangeText={text => this.setState({username: text})}
             />
           </View>
-          <View style={style.inputContainer}>
-            <Image source={emailIcon} style={style.inputIcon} />
+          <View style={styles.inputContainer}>
+            <Image source={emailIcon} style={styles.inputIcon} />
             <TextInput
-              style={style.input}
+              style={styles.input}
               placeholder="Email"
               placeholderTextColor="#FFFFFF"
               keyboardType="email-address"
+              value={email}
+              onChangeText={text => this.setState({email: text})}
             />
           </View>
-          <View style={style.inputContainer}>
-            <Image source={phoneIcon} style={style.inputIcon} />
+          <View style={styles.inputContainer}>
+            <Image source={phoneIcon} style={styles.inputIcon} />
             <TextInput
-              style={style.input}
+              style={styles.input}
               placeholder="Phone Number"
               placeholderTextColor="#FFFFFF"
               keyboardType="phone-pad"
+              value={phone}
+              onChangeText={text => this.setState({phone: text})}
             />
           </View>
         </View>
-        <TouchableOpacity style={style.saveButton}>
-          <Text style={style.saveButtonText}>Save</Text>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={this.updateUserProfile}>
+          <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
       </View>
     );
   }
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',

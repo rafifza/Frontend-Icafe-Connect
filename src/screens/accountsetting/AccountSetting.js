@@ -23,10 +23,68 @@ import ip from '../../../ip';
 export class AccountSetting extends Component {
   state = {
     isModalVisible: false,
+    fullname: '',
+    email: '',
+    username: '',
+  };
+
+  async componentDidMount() {
+    const userId = await AsyncStorage.getItem('userid');
+    if (userId) {
+      this.fetchUserProfile(userId);
+    }
+  }
+
+  fetchUserProfile = async userId => {
+    try {
+      const response = await axios.get(`${ip}/settingspage/getUserProfile`, {
+        params: {userId},
+      });
+
+      if (response.data.success) {
+        const {fullname, email} = response.data.userDetails;
+        this.setState({fullname, email});
+      } else {
+        Alert.alert('Error', 'User not found');
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      Alert.alert('Error', 'An error occurred while fetching user details');
+    }
   };
 
   toggleModal = () => {
     this.setState({isModalVisible: !this.state.isModalVisible});
+  };
+
+  handleDeleteAccount = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userid');
+      if (!userId) {
+        Alert.alert('Error', 'User ID not found');
+        return;
+      }
+
+      const response = await axios.delete(`${ip}/settingspage/deleteUser`, {
+        params: {userId},
+      });
+
+      if (response.data.success) {
+        await AsyncStorage.removeItem('token');
+        console.log('Token removed');
+        this.props.navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'Login'}],
+          }),
+        );
+      } else {
+        Alert.alert('Error', 'Failed to delete user');
+      }
+    } catch (error) {
+      console.log('Error deleting account:', error);
+      Alert.alert('Error', 'An error occurred while deleting the account');
+    }
   };
 
   handleLogout = async () => {
@@ -46,14 +104,14 @@ export class AccountSetting extends Component {
 
   render() {
     const {navigation} = this.props;
-    const {isModalVisible} = this.state;
+    const {isModalVisible, fullname, email} = this.state;
     return (
       <View style={style.container}>
         <View style={style.profileContainer}>
           <Image source={profilPicture} style={style.profilePicture} />
           <View style={style.textProfileContainer}>
-            <Text style={style.namaText}>Full Name</Text>
-            <Text style={style.emailText}>username@gmail.com</Text>
+            <Text style={style.namaText}>{fullname}</Text>
+            <Text style={style.emailText}>{email}</Text>
             <TouchableOpacity
               style={style.editProfileContainer}
               onPress={() => this.props.navigation.navigate('Edit Profile')}>
