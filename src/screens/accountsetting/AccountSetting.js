@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Modal,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {CommonActions} from '@react-navigation/native';
 import React, {Component} from 'react';
 import profilPicture from '../../../assets/images/GamerParadise.png';
 import arrowIcon from '../../../assets/images/Arrow.png';
@@ -25,6 +27,21 @@ export class AccountSetting extends Component {
     this.setState({isModalVisible: !this.state.isModalVisible});
   };
 
+  handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      console.log('Token removed');
+      this.props.navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'Login'}],
+        }),
+      );
+    } catch (error) {
+      console.log('Error clearing access token:', error);
+    }
+  };
+
   render() {
     const {navigation} = this.props;
     const {isModalVisible} = this.state;
@@ -38,11 +55,7 @@ export class AccountSetting extends Component {
             <TouchableOpacity
               style={style.editProfileContainer}
               onPress={() => this.props.navigation.navigate('Edit Profile')}>
-              <Text
-                style={style.editProfileText}
-                onPress={() => navigation.navigate('Edit Profile')}>
-                Edit profile
-              </Text>
+              <Text style={style.editProfileText}>Edit profile</Text>
               <Image source={arrowIcon} style={style.arrowIcon} />
             </TouchableOpacity>
           </View>
@@ -71,8 +84,10 @@ export class AccountSetting extends Component {
             onPress={this.toggleModal}>
             <Text style={style.aboutText}>Disable Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={style.logoutContainer}>
-            <Text style={style.aboutText}>Log out</Text>
+          <TouchableOpacity
+            style={style.logoutContainer}
+            onPress={this.handleLogout}>
+            <Text style={style.aboutText}>Sign Out</Text>
           </TouchableOpacity>
         </View>
         <Modal

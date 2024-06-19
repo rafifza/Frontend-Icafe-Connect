@@ -1,5 +1,13 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, TextInput, View, FlatList, Image} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import cardImagePlaceholder from '../../../assets/images/Alcatraz.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
@@ -46,27 +54,7 @@ class SearchScreen extends Component {
         rating: 3.5,
         description: 'A great place to relax and enjoy your gaming experience.',
       },
-      {
-        id: '6',
-        name: 'iCafe Two',
-        workHours: '09:00 - 21:00',
-        rating: 3.5,
-        description: 'A great place to relax and enjoy your gaming experience.',
-      },
-      {
-        id: '7',
-        name: 'iCafe Two',
-        workHours: '09:00 - 21:00',
-        rating: 3.5,
-        description: 'A great place to relax and enjoy your gaming experience.',
-      },
-      {
-        id: '8',
-        name: 'iCafe Two',
-        workHours: '09:00 - 21:00',
-        rating: 3.5,
-        description: 'A great place to relax and enjoy your gaming experience.',
-      },
+      // ... other items
     ],
   };
 
@@ -74,25 +62,30 @@ class SearchScreen extends Component {
     this.setState({searchQuery: text});
   };
 
-  renderItem = ({item}) => (
-    <View style={styles.card}>
-      <Image source={cardImagePlaceholder} style={styles.cardImage} />
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{item.name}</Text>
-        <View style={styles.cardInfo}>
-          <View style={styles.infoRow}>
-            <Image source={workHoursIcon} style={styles.infoIcon} />
-            <Text style={styles.infoText}>{item.workHours}</Text>
+  renderItem = ({item}) => {
+    const {navigation} = this.props;
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => navigation.navigate('Icafe Login')}>
+        <Image source={cardImagePlaceholder} style={styles.cardImage} />
+        <View style={styles.cardContent}>
+          <Text style={styles.cardTitle}>{item.name}</Text>
+          <View style={styles.cardInfo}>
+            <View style={styles.infoRow}>
+              <Image source={workHoursIcon} style={styles.infoIcon} />
+              <Text style={styles.infoText}>{item.workHours}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Image source={starIcon} style={styles.infoIconStar} />
+              <Text style={styles.infoText}>{item.rating}</Text>
+            </View>
           </View>
-          <View style={styles.infoRow}>
-            <Image source={starIcon} style={styles.infoIconStar} />
-            <Text style={styles.infoText}>{item.rating}</Text>
-          </View>
+          <Text style={styles.cardDescription}>{item.description}</Text>
         </View>
-        <Text style={styles.cardDescription}>{item.description}</Text>
-      </View>
-    </View>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   render() {
     return (
@@ -173,7 +166,7 @@ const styles = StyleSheet.create({
   searchIcon: {
     width: 20,
     height: 20,
-    tintColor: '#FFFFFF', 
+    tintColor: '#FFFFFF',
     marginRight: 10,
   },
   searchBar: {

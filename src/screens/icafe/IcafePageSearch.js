@@ -4,7 +4,7 @@ import imageIcafePage from '../../../assets/images/GamerParadise.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
 
-export class IcafePage extends Component {
+export class IcafePageSearch extends Component {
   render() {
     const {navigation} = this.props;
     return (
@@ -169,4 +169,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IcafePage;
+export default IcafePageSearch;

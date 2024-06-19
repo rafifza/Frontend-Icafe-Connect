@@ -6,19 +6,56 @@ import {
   useWindowDimensions,
   TouchableOpacity,
   Text,
+  Alert,
 } from 'react-native';
 import Logo from '../../../assets/images/Logo.png';
+import {useNavigation} from '@react-navigation/native';
 import CustomInput from '../../components/custominputs/CustomInput';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {API_URL} from '@env';
+import ip from '../../../ip';
 
 const SignInScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const {height} = useWindowDimensions();
+  const navigation = useNavigation();
 
-  const handleSignIn = () => {};
+  const handleSignIn = async () => {
+    try {
+      const response = await axios.post(`${ip}/loginpage/login`, {
+        username: username,
+        password: password,
+      });
 
-  const handleSignUp = () => {};
+      if (response.status === 200) {
+        const token = response.data.token;
+        const user = response.data.user[0];
+        const name = user.username;
+
+        const existingToken = await AsyncStorage.getItem('token');
+
+        if (existingToken) {
+          await AsyncStorage.removeItem('token');
+        }
+
+        if (token) {
+          await AsyncStorage.setItem('token', token);
+          await AsyncStorage.setItem('username', name);
+          navigation.navigate('MainApp');
+        } else {
+          Alert.alert('Error', 'Token is null');
+        }
+      } else {
+        Alert.alert('Error', response.data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again later.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -41,7 +78,7 @@ const SignInScreen = () => {
         style={{width: '90%'}}
       />
       <View style={styles.forgotPasswordContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
           <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
         </TouchableOpacity>
       </View>
@@ -50,7 +87,7 @@ const SignInScreen = () => {
       </TouchableOpacity>
       <Text style={styles.signUpText}>
         Don’t have an account?{' '}
-        <TouchableOpacity onPress={handleSignUp}>
+        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.signUpLink}>Sign up</Text>
         </TouchableOpacity>
       </Text>

@@ -16,34 +16,57 @@ import historyIcon from '../../../assets/images/eWalletHistory.png';
 import icafeImage from '../../../assets/images/GamerParadise.png';
 import ratingIcon from '../../../assets/images/Star.png';
 import locationIcon from '../../../assets/images/Location.png';
+import axios from 'axios';
+import ip from '../../../ip';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class Dashboard extends Component {
-  render() {
-    // Example data for iCafeContainer
-    const iCafeData = [
-      {
-        name: 'Alcatraz',
-        rating: '4.8',
-        location:
-          'Jl. KH. Ahmad Dahlan Kby. No.32, RT.3/RW.3, Kramat Pela, Kec. Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12130',
-      },
-      {
-        name: 'Alcatraz',
-        rating: '4.8',
-        location:
-          'Jl. KH. Ahmad Dahlan Kby. No.32, RT.3/RW.3, Kramat Pela, Kec. Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12130',
-      },
-      // Add more data as needed
-    ];
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      iCafeData: [],
+    };
+  }
 
+  fetchName = async () => {
+    try {
+      const name = await AsyncStorage.getItem('username');
+      this.setState({name: name});
+    } catch (error) {
+      console.error('Error fetching name:', error);
+    }
+  };
+
+  fetchICafeData = async () => {
+    try {
+      const response = await axios.get(`${ip}/homepage/getFeaturediCafes`);
+      this.setState({
+        iCafeData: response.data,
+        icafeName: response.data.name,
+        icafeRating: response.data.rating,
+        icafeLocation: response.data.location,
+      });
+    } catch (error) {
+      console.error('Error fetching iCafe data:', error);
+    }
+  };
+
+  componentDidMount() {
+    this.fetchName();
+    this.fetchICafeData();
+  }
+
+  render() {
+    const {navigation} = this.props;
+    const {name, iCafeData} = this.state;
     // Example promo images
     const promoImages = [promoImage, promoImage, promoImage, promoImage];
-    const {navigation} = this.props;
     return (
       <View style={style.container}>
         <View style={style.contentContainer}>
           <Text style={style.helloText}>
-            Hello <Text style={{fontWeight: 'bold'}}>MANAAAA</Text>
+            Hello <Text style={{fontWeight: 'bold'}}>{name}</Text>
           </Text>
           <View style={style.inputContainer}>
             <Image source={searchIcon} style={style.inputIcon} />
@@ -90,7 +113,7 @@ export class Dashboard extends Component {
                 <TouchableOpacity
                   style={style.icafeContainer}
                   key={index}
-                  onPress={() => navigation.navigate('Icafe Page')}>
+                  onPress={() => navigation.navigate('Icafe')}>
                   <Image source={icafeImage} style={style.icafeImage} />
                   <View style={style.icafeNameContainer}>
                     <Text style={style.icafeName}>{iCafe.name}</Text>
@@ -104,7 +127,7 @@ export class Dashboard extends Component {
                         style={style.icafeLocation}
                       />
                       <Text style={style.icafeLocationText}>
-                        {iCafe.location}
+                        {iCafe.address}
                       </Text>
                     </View>
                   </View>

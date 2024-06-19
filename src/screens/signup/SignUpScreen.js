@@ -8,8 +8,10 @@ import {
   Text,
   BackHandler,
 } from 'react-native';
+import axios from 'axios';
 import Logo from '../../../assets/images/Logo.png';
 import CustomInput from '../../components/custominputs/CustomInput';
+import {API_URL} from '@env';
 
 const SignUpScreen = ({navigation}) => {
   const [fullName, setFullName] = useState('');
@@ -35,9 +37,33 @@ const SignUpScreen = ({navigation}) => {
     return true;
   };
 
-  const handleSignIn = () => {};
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
 
-  const handleSignUp = () => {};
+    try {
+      const response = await axios.post(`${API_URL}/loginpage/register`, {
+        username: username,
+        password: password,
+        email: email,
+        fullname: fullName,
+        phonenumber: phoneNumber,
+      });
+
+      if (response.status === 201) {
+        alert(response.data);
+        // Navigate to the login screen or home screen
+        navigation.navigate('Login');
+      } else {
+        alert(response.data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong. Please try again later.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -87,7 +113,7 @@ const SignUpScreen = ({navigation}) => {
         secureTextEntry={true}
         style={{width: '90%'}}
       />
-      <TouchableOpacity style={styles.signUpButton} onPress={handleSignIn}>
+      <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
         <Text style={styles.signUpButtonText}>Sign Up</Text>
       </TouchableOpacity>
     </View>

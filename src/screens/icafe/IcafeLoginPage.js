@@ -1,10 +1,17 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {Component} from 'react';
 import imageIcafePage from '../../../assets/images/GamerParadise.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
 
-export class IcafePage extends Component {
+export class IcafeLoginPage extends Component {
   render() {
     const {navigation} = this.props;
     return (
@@ -31,23 +38,31 @@ export class IcafePage extends Component {
           </View>
         </View>
         <View style={styles.pcCategoriesContainer}>
-          <Text style={styles.pcCategoriesText}>PC Categories</Text>
-        </View>
-        <View style={styles.billingContainer}>
-          <TouchableOpacity
-            style={[styles.billingClassContainer, styles.vvipContainer]}
-            onPress={() => navigation.navigate('Icafe Billing')}>
-            <Text style={styles.classTitle}>VVIP Class</Text>
-            <Text style={styles.billingText}>Sisa Billing: 03:02:30</Text>
+          <Text style={styles.haveAccountText}>
+            Have an account? Log in below
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="#aaa"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#aaa"
+            secureTextEntry={true}
+          />
+          <TouchableOpacity style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>Log In</Text>
           </TouchableOpacity>
-          <View style={[styles.billingClassContainer, styles.vipContainer]}>
-            <Text style={styles.classTitle}>VIP Class</Text>
-            <Text style={styles.billingText}>Sisa Billing: 03:01:45</Text>
-          </View>
-          <View style={[styles.billingClassContainer, styles.regularContainer]}>
-            <Text style={styles.classTitle}>Regular Class</Text>
-            <Text style={styles.billingText}>Sisa Billing: 03:00:50</Text>
-          </View>
+          <Text style={styles.orText}>Or</Text>
+          <TouchableOpacity
+            style={styles.haveAccContainer}
+            onPress={() => navigation.navigate('Icafe Billing')}>
+            <Text style={styles.haveAccText}>
+              Continue with your iCafe Connect account
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -122,51 +137,55 @@ const styles = StyleSheet.create({
   pcCategoriesContainer: {
     width: '90%',
     marginVertical: 5,
+    alignItems: 'center',
   },
-  pcCategoriesText: {
+  haveAccountText: {
     color: '#FFFFFF',
     fontSize: 17,
     textAlign: 'left',
-    fontWeight: '800',
+    fontWeight: '500',
   },
-  billingContainer: {
-    width: '90%',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  billingClassContainer: {
+  input: {
     width: '100%',
+    height: 40,
+    borderColor: '#555',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    color: '#fff',
+    backgroundColor: '#1c1c1c',
+  },
+  loginButton: {
+    width: '100%',
+    height: 40,
+    backgroundColor: '#1e90ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  orText: {
+    color: 'white',
+    marginTop: 10,
+  },
+  haveAccContainer: {
     padding: 15,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    width: '100%',
     borderRadius: 10,
-    marginBottom: 10,
+    alignItems: 'center',
   },
-  vvipContainer: {
-    backgroundColor: 'rgba(126, 101, 22, 0.15)',
-    borderWidth: 3,
-    borderColor: '#AA8608',
-    marginBottom: 20,
-  },
-  vipContainer: {
-    backgroundColor: 'rgba(11, 90, 118, 0.15)',
-    borderWidth: 3,
-    borderColor: '#277CC6',
-    marginBottom: 20,
-  },
-  regularContainer: {
-    backgroundColor: 'rgba(97, 94, 98, 0.15)',
-    borderWidth: 3,
-    borderColor: '#C3BBBB',
-  },
-  classTitle: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  billingText: {
-    fontSize: 15,
-    color: '#FFFFFF',
-    marginTop: 5,
+  haveAccText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '800',
   },
 });
 
-export default IcafePage;
+export default IcafeLoginPage;
