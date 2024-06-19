@@ -7,59 +7,49 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import axios from 'axios';
 import cardImagePlaceholder from '../../../assets/images/Alcatraz.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
 import locationIcon from '../../../assets/images/Location.png';
 import searchIcon from '../../../assets/images/Search.png';
+import ip from '../../../ip';
 
 class SearchScreen extends Component {
   state = {
     searchQuery: '',
-    data: [
-      // Sample Data for testing
-      {
-        id: '1',
-        name: 'High Grounds PIK',
-        workHours: '10:00 - 20:00',
-        rating: 4.0,
-        description: 'A great place to relax and enjoy your gaming experience.',
-      },
-      {
-        id: '2',
-        name: 'iCafe Two',
-        workHours: '09:00 - 21:00',
-        rating: 3.5,
-        description: 'A great place to relax and enjoy your gaming experience.',
-      },
-      {
-        id: '3',
-        name: 'iCafe Two',
-        workHours: '09:00 - 21:00',
-        rating: 3.5,
-        description: 'A great place to relax and enjoy your gaming experience.',
-      },
-      {
-        id: '4',
-        name: 'iCafe Two',
-        workHours: '09:00 - 21:00',
-        rating: 3.5,
-        description: 'A great place to relax and enjoy your gaming experience.',
-      },
-      {
-        id: '5',
-        name: 'iCafe Two',
-        workHours: '09:00 - 21:00',
-        rating: 3.5,
-        description: 'A great place to relax and enjoy your gaming experience.',
-      },
-      // ... other items
-    ],
+    data: [],
+    loading: true,
+    error: null,
+  };
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData = async () => {
+    try {
+      const response = await axios.get(`${ip}/homepage/getAlliCafes`);
+      if (Array.isArray(response.data)) {
+        this.setState({data: response.data, loading: false});
+      } else {
+        this.setState({error: 'Unexpected response format', loading: false});
+      }
+    } catch (error) {
+      this.setState({error: error.message, loading: false});
+      Alert.alert('Error', 'Failed to fetch data');
+    }
   };
 
   handleSearch = text => {
     this.setState({searchQuery: text});
+  };
+
+  formatTime = time => {
+    return time.replace(/:00$/, '');
   };
 
   renderItem = ({item}) => {
@@ -67,27 +57,51 @@ class SearchScreen extends Component {
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate('Icafe Login')}>
+        onPress={() => navigation.navigate('Icafe Search Page')}>
         <Image source={cardImagePlaceholder} style={styles.cardImage} />
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>{item.name}</Text>
           <View style={styles.cardInfo}>
             <View style={styles.infoRow}>
               <Image source={workHoursIcon} style={styles.infoIcon} />
-              <Text style={styles.infoText}>{item.workHours}</Text>
+              <Text style={styles.infoText}>
+                {this.formatTime(item.open_time)} -{' '}
+                {this.formatTime(item.close_time)}
+              </Text>
             </View>
             <View style={styles.infoRow}>
               <Image source={starIcon} style={styles.infoIconStar} />
               <Text style={styles.infoText}>{item.rating}</Text>
             </View>
           </View>
-          <Text style={styles.cardDescription}>{item.description}</Text>
+          <Text style={styles.cardDescription}>{item.address}</Text>
         </View>
       </TouchableOpacity>
     );
   };
 
   render() {
+    const {searchQuery, data, loading, error} = this.state;
+    const filteredData = data.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+
+    if (loading) {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.topContainer}>
@@ -106,16 +120,16 @@ class SearchScreen extends Component {
               style={styles.searchBar}
               placeholder="Search for iCafes"
               placeholderTextColor="#FFFFFF"
-              value={this.state.searchQuery}
+              value={searchQuery}
               onChangeText={this.handleSearch}
             />
           </View>
         </View>
         <View style={styles.listContainer}>
           <FlatList
-            data={this.state.data}
+            data={filteredData}
             renderItem={this.renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={(item, index) => index.toString()}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContent}
           />
@@ -129,7 +143,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     backgroundColor: '#00072B',
   },
   topContainer: {
@@ -234,6 +248,11 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 8,
     color: '#FFFFFF',
+  },
+  errorText: {
+    fontSize: 18,
+    color: '#FF0000',
+    textAlign: 'center',
   },
 });
 

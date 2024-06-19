@@ -90,7 +90,7 @@ function SearchPage() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Search Screen" component={SearchScreen} />
-      <Stack.Screen name="Icafe Page" component={IcafePageSearch} />
+      <Stack.Screen name="Icafe Search Page" component={IcafePageSearch} />
       <Stack.Screen name="Icafe Billing" component={IcafeBilling} />
     </Stack.Navigator>
   )

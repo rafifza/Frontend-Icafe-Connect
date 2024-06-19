@@ -33,7 +33,7 @@ const SignInScreen = () => {
       if (response.status === 200) {
         const token = response.data.token;
         const user = response.data.user[0];
-        const name = user.username;
+        const userid = user.userid.toString();
 
         const existingToken = await AsyncStorage.getItem('token');
 
@@ -43,7 +43,7 @@ const SignInScreen = () => {
 
         if (token) {
           await AsyncStorage.setItem('token', token);
-          await AsyncStorage.setItem('username', name);
+          await AsyncStorage.setItem('userid', userid);
           navigation.navigate('MainApp');
         } else {
           Alert.alert('Error', 'Token is null');

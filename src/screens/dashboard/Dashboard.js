@@ -24,15 +24,34 @@ export class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
+      nama: '',
       iCafeData: [],
     };
   }
 
   fetchName = async () => {
     try {
-      const name = await AsyncStorage.getItem('username');
-      this.setState({name: name});
+      // Retrieve the user ID from AsyncStorage
+      const id = await AsyncStorage.getItem('userid');
+      if (!id) {
+        throw new Error('User ID not found in storage');
+      }
+
+      const response = await axios.get(`${ip}/homepage/getUsername`, {
+        params: {
+          userid: id,
+        },
+      });
+      console.log(id);
+      console.log('API response:', response.data); // Log the response data
+
+      if (response.data && response.data.username) {
+        this.setState({
+          nama: response.data.username,
+        });
+      } else {
+        throw new Error('Invalid response data');
+      }
     } catch (error) {
       console.error('Error fetching name:', error);
     }
@@ -59,14 +78,14 @@ export class Dashboard extends Component {
 
   render() {
     const {navigation} = this.props;
-    const {name, iCafeData} = this.state;
+    const {nama, iCafeData} = this.state;
     // Example promo images
     const promoImages = [promoImage, promoImage, promoImage, promoImage];
     return (
       <View style={style.container}>
         <View style={style.contentContainer}>
           <Text style={style.helloText}>
-            Hello <Text style={{fontWeight: 'bold'}}>{name}</Text>
+            Hello <Text style={{fontWeight: 'bold'}}>{nama}</Text>
           </Text>
           <View style={style.inputContainer}>
             <Image source={searchIcon} style={style.inputIcon} />
