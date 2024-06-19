@@ -17,6 +17,8 @@ import supportIcon from '../../../assets/images/support.png';
 import notificationIcon from '../../../assets/images/notification.png';
 import aboutIcon from '../../../assets/images/about.png';
 import privacyIcon from '../../../assets/images/privacy.png';
+import axios from 'axios';
+import ip from '../../../ip';
 
 export class AccountSetting extends Component {
   state = {

@@ -49,6 +49,7 @@ export class ChangePassword extends Component {
 
       if (result.success) {
         Alert.alert('Success', 'Password updated successfully');
+        this.props.navigation.navigate('Account Setting');
       } else {
         Alert.alert('Error', result.message);
       }
