@@ -1,3 +1,4 @@
+import React, {Component} from 'react';
 import {
   Image,
   StyleSheet,
@@ -5,38 +6,68 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
-import React, {Component} from 'react';
+import axios from 'axios';
 import imageIcafePage from '../../../assets/images/GamerParadise.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
+import ip from '../../../ip'; // Assuming this is your backend API endpoint
+import AsyncStorage from '@react-native-async-storage/async-storage'; // If used later
 
-export class IcafeLoginPage extends Component {
+// Component definition
+class IcafeLoginPage extends Component {
+  state = {
+    cafeData: null,
+    loading: true,
+    error: null,
+  };
+
   render() {
     const {navigation} = this.props;
+    const {route} = this.props;
+    const {data, loading, error} = route.params;
+
+    if (loading) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.container}>
+        {/* Render your iCafe details */}
         <View style={styles.imageCardContainer}>
           <Image source={imageIcafePage} style={styles.imageIcafePage} />
           <View style={styles.overlay} />
           <View style={styles.textOverlay}>
-            <Text style={styles.textTitle}>Gamer Paradise</Text>
+            <Text style={styles.textTitle}>{data.name}</Text>
             <View style={styles.iconsContainer}>
               <View style={styles.iconContainer}>
                 <Image source={workHoursIcon} style={styles.workHourIcon} />
-                <Text style={styles.workHourText}>09:00 - 21:00</Text>
+                <Text style={styles.workHourText}>
+                  {data.open_time} - {data.close_time}
+                </Text>
               </View>
               <View style={styles.iconContainer}>
                 <Image source={starIcon} style={styles.starIcon} />
-                <Text style={styles.workHourText}>5.0</Text>
+                <Text style={styles.workHourText}>{data.rating}</Text>
               </View>
             </View>
-            <Text style={styles.textDescription}>
-              Jl. KH. Ahmad Dahlan Kby. No.32, RT.3/RW.3, Kramat Pela, Kec. Kby.
-              Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12130
-            </Text>
+            <Text style={styles.textDescription}>{data.address}</Text>
           </View>
         </View>
+        {/* Render login form */}
         <View style={styles.pcCategoriesContainer}>
           <Text style={styles.haveAccountText}>
             Have an account? Log in below
@@ -44,12 +75,12 @@ export class IcafeLoginPage extends Component {
           <TextInput
             style={styles.input}
             placeholder="Username"
-            placeholderTextColor="#aaa"
+            placeholderTextColor="#ffffff"
           />
           <TextInput
             style={styles.input}
             placeholder="Password"
-            placeholderTextColor="#aaa"
+            placeholderTextColor="#ffffff"
             secureTextEntry={true}
           />
           <TouchableOpacity style={styles.loginButton}>
@@ -58,7 +89,7 @@ export class IcafeLoginPage extends Component {
           <Text style={styles.orText}>Or</Text>
           <TouchableOpacity
             style={styles.haveAccContainer}
-            onPress={() => navigation.navigate('Icafe Billing')}>
+            onPress={() => navigation.navigate('IcafeBilling')}>
             <Text style={styles.haveAccText}>
               Continue with your iCafe Connect account
             </Text>
@@ -69,12 +100,23 @@ export class IcafeLoginPage extends Component {
   }
 }
 
+// Styles for the component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#00072B',
+  },
+  loadingText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    marginTop: 50,
+  },
+  errorText: {
+    color: '#FF0000',
+    fontSize: 20,
+    marginTop: 50,
   },
   imageCardContainer: {
     width: '100%',
@@ -148,13 +190,10 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     height: 40,
-    borderColor: '#555',
-    borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     paddingHorizontal: 10,
     marginVertical: 10,
-    color: '#fff',
-    backgroundColor: '#1c1c1c',
+    backgroundColor: 'rgba(255,255,255,0.1)',
   },
   loginButton: {
     width: '100%',

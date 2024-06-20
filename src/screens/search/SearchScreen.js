@@ -57,7 +57,9 @@ class SearchScreen extends Component {
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate('Icafe Search Page')}>
+        onPress={() =>
+          navigation.navigate('Icafe Search Page', {data: item, loading: false})
+        }>
         <Image source={cardImagePlaceholder} style={styles.cardImage} />
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>{item.name}</Text>
