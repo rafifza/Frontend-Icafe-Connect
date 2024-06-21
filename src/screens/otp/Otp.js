@@ -9,14 +9,13 @@ import {
   Alert,
 } from 'react-native';
 import axios from 'axios';
-import {useNavigation} from '@react-navigation/native';
 import Logo from '../../../assets/images/Logo.png';
 import CustomInput from '../../components/custominputs/CustomInput';
 import ip from '../../../ip';
 
-const ForgotPasswordScreen = () => {
+const Otp = () => {
   const [email, setEmail] = useState('');
-  const navigation = useNavigation();
+
   const {height} = useWindowDimensions();
 
   const handleSubmit = async () => {
@@ -24,7 +23,6 @@ const ForgotPasswordScreen = () => {
       const response = await axios.post(`${ip}/loginpage/request-otp`, {email});
       if (response.status === 200) {
         Alert.alert('Success', 'OTP sent to your email');
-        navigation.navigate('Otp');
       }
     } catch (error) {
       if (error.response) {
@@ -32,9 +30,11 @@ const ForgotPasswordScreen = () => {
         console.log(error.response.status);
         Alert.alert('Error', `Error sending OTP: ${error.response.data}`);
       } else if (error.request) {
+        // The request was made but no response was received
         console.log(error.request);
         Alert.alert('Error', 'No response received from the server');
       } else {
+        // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
         Alert.alert('Error', `Error: ${error.message}`);
       }
@@ -108,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen;
+export default Otp;

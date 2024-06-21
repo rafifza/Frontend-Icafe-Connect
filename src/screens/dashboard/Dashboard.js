@@ -25,13 +25,13 @@ export class Dashboard extends Component {
     super(props);
     this.state = {
       nama: '',
+      ewallet: 0,
       iCafeData: [],
     };
   }
 
   fetchName = async () => {
     try {
-      // Retrieve the user ID from AsyncStorage
       const id = await AsyncStorage.getItem('userid');
       if (!id) {
         throw new Error('User ID not found in storage');
@@ -42,12 +42,11 @@ export class Dashboard extends Component {
           userid: id,
         },
       });
-      console.log(id);
-      console.log('API response:', response.data); // Log the response data
 
       if (response.data && response.data.username) {
         this.setState({
           nama: response.data.username,
+          ewallet: response.data.ewallet_balance,
         });
       } else {
         throw new Error('Invalid response data');
@@ -62,9 +61,6 @@ export class Dashboard extends Component {
       const response = await axios.get(`${ip}/homepage/getFeaturediCafes`);
       this.setState({
         iCafeData: response.data,
-        icafeName: response.data.name,
-        icafeRating: response.data.rating,
-        icafeLocation: response.data.location,
       });
     } catch (error) {
       console.error('Error fetching iCafe data:', error);
@@ -78,74 +74,85 @@ export class Dashboard extends Component {
 
   render() {
     const {navigation} = this.props;
-    const {nama, iCafeData} = this.state;
+    const {nama, ewallet, iCafeData} = this.state;
+
+    // Format ewallet balance to Indonesian Rupiah (Rp xxx.xxx)
+    const formattedEwallet = ewallet.toLocaleString('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    });
+
     // Example promo images
     const promoImages = [promoImage, promoImage, promoImage, promoImage];
+
     return (
-      <View style={style.container}>
-        <View style={style.contentContainer}>
-          <Text style={style.helloText}>
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.helloText}>
             Hello <Text style={{fontWeight: 'bold'}}>{nama}</Text>
           </Text>
-          <View style={style.inputContainer}>
-            <Image source={searchIcon} style={style.inputIcon} />
+          <View style={styles.inputContainer}>
+            <Image source={searchIcon} style={styles.inputIcon} />
             <TextInput
-              style={style.input}
+              style={styles.input}
               placeholder="Search for iCafe"
               placeholderTextColor="#FFFFFF"
               secureTextEntry={false}
             />
           </View>
-          <View style={style.promoImageContainer}>
+          <View style={styles.promoImageContainer}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {promoImages.map((image, index) => (
-                <Image key={index} source={image} style={style.promoImage} />
+                <Image key={index} source={image} style={styles.promoImage} />
               ))}
             </ScrollView>
           </View>
-          <View style={style.balanceContainer}>
+          <View style={styles.balanceContainer}>
             <View>
-              <View style={style.balanceWrapper}>
-                <Image source={walletImage} style={style.walletImage} />
-                <Text style={style.yourBalanceText}>Your Balance</Text>
+              <View style={styles.balanceWrapper}>
+                <Image source={walletImage} style={styles.walletImage} />
+                <Text style={styles.yourBalanceText}>Your Balance</Text>
               </View>
-              <Text style={style.balanceText}>RP. 100.000</Text>
+              <Text style={styles.balanceText}>{formattedEwallet}</Text>
             </View>
 
-            <View style={style.topUpHistoryContainer}>
-              <View style={style.topupContainer}>
-                <Image source={topUpIcon} style={style.topUpIcon} />
-                <Text style={style.topUpText}>Top Up</Text>
-              </View>
+            <View style={styles.topUpHistoryContainer}>
               <TouchableOpacity
-                style={style.historyContainer}
+                style={styles.topupContainer}
+                onPress={() => navigation.navigate('Ewallet Topup')}>
+                <Image source={topUpIcon} style={styles.topUpIcon} />
+                <Text style={styles.topUpText}>Top Up</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.historyContainer}
                 onPress={() => navigation.navigate('Ewallet History')}>
-                <Image source={historyIcon} style={style.historyIcon} />
-                <Text style={style.historyText}>History</Text>
+                <Image source={historyIcon} style={styles.historyIcon} />
+                <Text style={styles.historyText}>History</Text>
               </TouchableOpacity>
             </View>
           </View>
-          <View style={style.featuredContainer}>
-            <Text style={style.featuredText}>Featured iCafes</Text>
+          <View style={styles.featuredContainer}>
+            <Text style={styles.featuredText}>Featured iCafes</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {iCafeData.map((iCafe, index) => (
                 <TouchableOpacity
-                  style={style.icafeContainer}
+                  style={styles.icafeContainer}
                   key={index}
                   onPress={() => navigation.navigate('Icafe')}>
-                  <Image source={icafeImage} style={style.icafeImage} />
-                  <View style={style.icafeNameContainer}>
-                    <Text style={style.icafeName}>{iCafe.name}</Text>
-                    <View style={style.icafeRatingContainer}>
-                      <Image source={ratingIcon} style={style.icafeRating} />
-                      <Text style={style.icafeRatingText}>{iCafe.rating}</Text>
+                  <Image source={icafeImage} style={styles.icafeImage} />
+                  <View style={styles.icafeNameContainer}>
+                    <Text style={styles.icafeName}>{iCafe.name}</Text>
+                    <View style={styles.icafeRatingContainer}>
+                      <Image source={ratingIcon} style={styles.icafeRating} />
+                      <Text style={styles.icafeRatingText}>{iCafe.rating}</Text>
                     </View>
-                    <View style={style.icafeLocationContainer}>
+                    <View style={styles.icafeLocationContainer}>
                       <Image
                         source={locationIcon}
-                        style={style.icafeLocation}
+                        style={styles.icafeLocation}
                       />
-                      <Text style={style.icafeLocationText}>
+                      <Text style={styles.icafeLocationText}>
                         {iCafe.address}
                       </Text>
                     </View>
@@ -160,7 +167,7 @@ export class Dashboard extends Component {
   }
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',

@@ -18,6 +18,7 @@ import fullNameIcon from '../../../assets/images/Fullname-Username.png';
 import usernameIcon from '../../../assets/images/Fullname-Username.png';
 import emailIcon from '../../../assets/images/Email.png';
 import phoneIcon from '../../../assets/images/Phone.png';
+import {CommonActions} from '@react-navigation/native';
 
 export class EditProfilePage extends Component {
   state = {
@@ -91,6 +92,14 @@ export class EditProfilePage extends Component {
 
       if (response.data.success) {
         Alert.alert('Success', 'User profile updated successfully');
+        const navigation = this.props.navigation;
+        navigation.navigate('Account Setting');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'Account Setting'}],
+          }),
+        );
       } else {
         Alert.alert('Error', 'Failed to update user profile');
       }
