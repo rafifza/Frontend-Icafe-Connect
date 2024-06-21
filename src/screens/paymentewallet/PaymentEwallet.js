@@ -17,7 +17,7 @@ import shopeepayIcon from '../../../assets/images/Shopeepay.png';
 import continueIcon from '../../../assets/images/Arrow.png';
 import ip from '../../../ip';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {CommonActions} from '@react-navigation/native';
 export class PaymentEwallet extends Component {
   state = {
     selectedPayment: null,
@@ -62,6 +62,14 @@ export class PaymentEwallet extends Component {
 
       if (response.status === 200) {
         Alert.alert('Success', 'eWallet top-up successful');
+        const navigation = this.props.navigation;
+
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'Dashboard'}],
+          }),
+        );
       } else {
         Alert.alert('Error', 'Top-up failed. Please try again.');
       }
