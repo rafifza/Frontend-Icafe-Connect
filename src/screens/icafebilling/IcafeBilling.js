@@ -1,64 +1,208 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React, {Component} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import axios from 'axios';
+import ip from '../../../ip';
 import imageIcafePage from '../../../assets/images/GamerParadise.png';
 import workHoursIcon from '../../../assets/images/timeicon.png';
 import starIcon from '../../../assets/images/staricon.png';
 import arrowIcon from '../../../assets/images/Arrow.png';
 
-export class IcafeBilling extends Component {
+class IcafeBilling extends Component {
   state = {
-    timeSlots: [
-      {hours: 1, price: 'Rp. 10,000'},
-      {hours: 2, price: 'Rp. 18,000'},
-      {hours: 3, price: 'Rp. 25,000'},
-      // Add more time slots as needed
-    ],
+    icafeData: null,
+    loading: true,
+    error: null,
+    classType: null,
+    prices: [],
+    icafe_detail_id: null,
+  };
+
+  componentDidMount() {
+    this.getClassTypeFromNavigation();
+    this.fetchIcafeData();
+  }
+
+  getClassTypeFromNavigation = () => {
+    const {route} = this.props;
+    const {params} = route;
+    if (params && params.classType) {
+      this.setState({classType: params.classType});
+    }
+  };
+
+  fetchIcafeData = async () => {
+    const {route} = this.props;
+    const {params} = route;
+    if (params && params.icafe_id && params.classType) {
+      try {
+        const response = await axios.get(`${ip}/icafepage/getPCBillingInfo`, {
+          params: {
+            icafe_id: params.icafe_id,
+            pc_category: params.classType,
+          },
+        });
+        this.setState({
+          icafeData: response.data,
+          loading: false,
+          icafe_detail_id: response.data.icafe_detail_id,
+        });
+        this.fetchBillingPrices(response.data.icafe_detail_id);
+        console.log(response.data.icafe_detail_id);
+      } catch (error) {
+        console.error('Error fetching iCafe details:', error);
+        Alert.alert('Error', 'Failed to fetch iCafe data');
+        this.setState({error: error.message, loading: false});
+      }
+    } else {
+      console.error('Invalid parameters received:', params);
+      Alert.alert('Error', 'Invalid navigation parameters received');
+      this.setState({error: 'Invalid parameters', loading: false});
+    }
+  };
+
+  fetchBillingPrices = async icafe_detail_id => {
+    try {
+      const response = await axios.get(`${ip}/icafepage/getBillingPrices`, {
+        params: {icafe_detail_id},
+      });
+      this.setState({prices: response.data});
+    } catch (error) {
+      console.error('Error fetching billing prices:', error);
+      Alert.alert('Error', 'Failed to fetch billing prices');
+    }
+  };
+
+  navigateToSpecification = () => {
+    const {navigation} = this.props;
+    const {route} = this.props;
+    const {icafe_detail_id} = this.state;
+    navigation.navigate('Specification', {
+      data: route.params.data,
+      icafe_detail_id: icafe_detail_id,
+      classType: route.params.classType,
+    });
+    console.log(icafe_detail_id);
+    console.log(route.params.data);
+    console.log(route.params.classType);
+  };
+
+  handleBuyButtonPress = (price, hours, billing_price_id) => {
+    const {navigation} = this.props;
+    const {route} = this.props;
+    navigation.navigate('Payment', {
+      price,
+      hours,
+      billing_price_id,
+      data: route.params.data.name,
+      classType: route.params.classType,
+    });
+    console.log(
+      price,
+      hours,
+      billing_price_id,
+      route.params.data.name,
+      route.params.classType,
+    );
   };
 
   render() {
+    const {icafeData, loading, error, classType, prices} = this.state;
+    const {route} = this.props;
+    const data = route.params.data;
+
+    if (loading) {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.imageCardContainer}>
           <Image source={imageIcafePage} style={styles.imageIcafePage} />
           <View style={styles.overlay} />
           <View style={styles.textOverlay}>
-            <Text style={styles.textTitle}>Gamer Paradise</Text>
+            <Text style={styles.textTitle}>{data.name}</Text>
             <View style={styles.iconsContainer}>
               <View style={styles.iconContainer}>
-                <Image source={workHoursIcon} style={styles.icon} />
-                <Text style={styles.iconText}>09:00 - 21:00</Text>
+                <Image source={workHoursIcon} style={styles.workHourIcon} />
+                <Text style={styles.workHourText}>
+                  {data.open_time} - {data.close_time}
+                </Text>
               </View>
               <View style={styles.iconContainer}>
-                <Image source={starIcon} style={styles.icon} />
-                <Text style={styles.iconText}>5.0</Text>
+                <Image source={starIcon} style={styles.starIcon} />
+                <Text style={styles.workHourText}>{data.rating}</Text>
               </View>
             </View>
-            <Text style={styles.textDescription}>
-              Jl. KH. Ahmad Dahlan Kby. No.32, RT.3/RW.3, Kramat Pela, Kec. Kby.
-              Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12130
+            <Text style={styles.textDescription}>{data.address}</Text>
+          </View>
+        </View>
+        <View style={styles.pcCategoriesContainer}>
+          <TouchableOpacity
+            style={[
+              styles.billingClassContainer,
+              this.getPriceContainerStyle(classType),
+            ]}
+            onPress={this.navigateToSpecification}>
+            <Text style={styles.pcCategoriesText}>{classType} Class</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.computerSpecificationContainer}
+            onPress={this.navigateToSpecification}>
+            <Text style={styles.computerSpecificationText}>
+              Computer Specifications
+            </Text>
+            <View style={styles.arrowIconContainer}>
+              <Image source={arrowIcon} style={styles.arrowIcon} />
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.availableComputersContainer}>
+          <Text style={styles.availableComputersTexts}>
+            Computers Available :
+          </Text>
+          <View style={styles.availableComputersTextContainer}>
+            <Text style={styles.availableComputersText}>
+              {icafeData.available_computers}/{icafeData.total_computers}
             </Text>
           </View>
         </View>
-        <View style={styles.bottomTextContainer}>
-          <View style={styles.classContainerText}>
-            <Text style={styles.classText}>VVIP CLASS</Text>
-          </View>
-          <View style={styles.computerSpecContainer}>
-            <Text style={styles.computerSpecText}>Computer Specification</Text>
-            <Image source={arrowIcon} style={styles.arrowIcon} />
-          </View>
-        </View>
-        <View style={styles.hoursContainer}>
-          {this.state.timeSlots.map((slot, index) => (
-            <View key={index} style={styles.slotContainer}>
+        <View style={styles.pricesContainer}>
+          {prices.map((price, index) => (
+            <View key={index} style={[styles.priceContainer]}>
               <View>
-                <Text style={styles.slotText}>{slot.hours} Hour(s)</Text>
-                <Text style={styles.priceText}>{slot.price}</Text>
+                <Text style={styles.priceName}>{price.hours} Hours</Text>
+                <Text style={styles.priceAmount}>
+                  Rp.{price.price.toLocaleString('ID')}
+                </Text>
               </View>
               <TouchableOpacity
                 style={styles.buyButton}
                 onPress={() =>
-                  console.log('Buy button pressed for', slot.hours, 'hour(s)')
+                  this.handleBuyButtonPress(
+                    price.price,
+                    price.hours,
+                    price.billing_price_id,
+                  )
                 }>
                 <Text style={styles.buyButtonText}>Buy</Text>
               </TouchableOpacity>
@@ -68,156 +212,201 @@ export class IcafeBilling extends Component {
       </View>
     );
   }
+
+  getPriceContainerStyle = classType => {
+    switch (classType) {
+      case 'VVIP':
+        return styles.vvipContainer;
+      case 'VIP':
+        return styles.vipContainer;
+      case 'Regular':
+        return styles.regularContainer;
+      default:
+        return styles.regularContainer;
+    }
+  };
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
+    alignItems: 'center',
     backgroundColor: '#00072B',
   },
   imageCardContainer: {
     width: '100%',
-    height: 250,
+    alignItems: 'center',
     justifyContent: 'center',
   },
   imageIcafePage: {
     width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    height: 230,
   },
   overlay: {
     position: 'absolute',
     width: '100%',
-    height: '100%',
+    top: 0,
+    height: 231,
     backgroundColor: 'black',
     opacity: 0.5,
   },
   textOverlay: {
     position: 'absolute',
-    width: '90%',
-    marginLeft: '5%',
+    top: '50%',
+    left: '50%',
+    transform: [{translateX: -170}, {translateY: -50}],
+    width: '80%',
   },
   textTitle: {
     color: 'white',
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: '700',
   },
   iconsContainer: {
     flexDirection: 'row',
+    gap: 10,
     marginVertical: 10,
   },
   iconContainer: {
     flexDirection: 'row',
-    marginRight: 20,
+    justifyContent: 'center',
+    gap: 5,
     alignItems: 'center',
   },
-  icon: {
+  workHourIcon: {
     width: 20,
     height: 20,
-    marginRight: 5,
   },
-  iconText: {
+  workHourText: {
     fontSize: 16,
     color: '#FFFFFF',
   },
+  starIcon: {
+    width: 30,
+    height: 30,
+    marginTop: 10,
+  },
   textDescription: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#FFFFFF',
-    textAlign: 'left',
+    fontWeight: '400',
   },
-  bottomTextContainer: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  classContainerText: {
-    backgroundColor: 'rgba(126, 101, 22, 0.15)',
-    borderWidth: 3,
-    borderColor: '#AA8608',
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  classText: {
-    color: '#FFFFFF',
-    fontWeight: '800',
-  },
-  computerSpecContainer: {
+  pcCategoriesContainer: {
+    width: '90%',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 10,
+    marginTop: 10,
   },
-  computerSpecText: {
+  pcCategoriesText: {
     color: '#FFFFFF',
-    marginRight: 5,
+    fontSize: 17,
+    textAlign: 'left',
+    fontWeight: '700',
   },
-  arrowIcon: {
-    width: 20,
-    height: 10,
-  },
-  computerAvailContainer: {
+  computerSpecificationContainer: {
     flexDirection: 'row',
-    marginLeft: '5%',
-    marginVertical: 10,
-  },
-  computerAvailText: {
-    color: '#FFFFFF',
-    marginTop: 5,
-  },
-  computerAvailCont: {
-    backgroundColor: '#277CC6',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingVertical: 1,
+    paddingLeft: 10,
+    paddingRight: 5,
+    borderRadius: 10,
     marginLeft: 10,
+  },
+  computerSpecificationText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  arrowIconContainer: {
     padding: 5,
     borderRadius: 10,
   },
-  computerAvail: {
-    color: '#FFFFFF',
-    fontWeight: '800',
+  arrowIcon: {
+    width: 20,
+    height: 20,
   },
-  hoursContainer: {
-    flexDirection: 'column',
-    marginTop: 20,
-    justifyContent: 'center',
+  availableComputersContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '90%',
+    flexDirection: 'row',
+    marginBottom: 15,
     alignItems: 'center',
   },
-  slotContainer: {
+  availableComputersTexts: {
+    color: '#FFFFFF',
+  },
+  availableComputersText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  availableComputersTextContainer: {
+    backgroundColor: '#277CC6',
+    padding: 5,
+    borderRadius: 10,
+    marginLeft: 10,
+  },
+  pricesContainer: {
+    width: '90%',
+    alignItems: 'center',
+  },
+  priceContainer: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    width: '90%',
-    marginVertical: 10,
-    borderRadius: 20,
+    marginBottom: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomWidth: 1,
+    paddingBottom: 10,
     paddingHorizontal: 20,
-    paddingVertical: 5,
+    paddingVertical: 10,
+    borderRadius: 10,
   },
-  slotContText: {
-    flexDirection: 'column',
-  },
-  slotText: {
+  priceName: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    marginLeft: 10,
     color: '#FFFFFF',
   },
-  priceText: {
-    fontSize: 14,
-    marginBottom: 5,
-    marginLeft: 10,
+  priceAmount: {
+    fontSize: 16,
     color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  billingClassContainer: {
+    borderRadius: 10,
+  },
+  vvipContainer: {
+    backgroundColor: 'rgba(126, 101, 22, 0.15)',
+    borderWidth: 3,
+    borderColor: '#AA8608',
+    borderRadius: 10,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+  },
+  vipContainer: {
+    backgroundColor: 'rgba(11, 90, 118, 0.15)',
+    borderWidth: 3,
+    borderColor: '#277CC6',
+    borderRadius: 10,
+    padding: 5,
+    marginVertical: 10,
+  },
+  regularContainer: {
+    backgroundColor: 'rgba(97, 94, 98, 0.15)',
+    borderWidth: 3,
+    borderColor: '#C3BBBB',
+    borderRadius: 10,
+    padding: 5,
+    marginVertical: 10,
   },
   buyButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingHorizontal: 15,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 20,
-    marginRight: 10,
   },
   buyButtonText: {
     color: '#fff',

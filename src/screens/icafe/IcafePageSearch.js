@@ -5,6 +5,7 @@ import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
 
 export class IcafePageSearch extends Component {
+  
   render() {
     const {navigation} = this.props;
     return (

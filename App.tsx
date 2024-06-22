@@ -27,6 +27,8 @@ import ForgotPasswordScreen from './src/screens/forgotpassword/ForgotPasswordScr
 import SignUpScreen from './src/screens/signup/SignUpScreen';
 import Otp from './src/screens/otp/Otp';
 import PaymentEwallet from './src/screens/paymentewallet/PaymentEwallet';
+import Specification from './src/screens/specification/Specification';
+import Payment from './src/screens/payment/Payment';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -96,8 +98,11 @@ function SearchPage({ navigation }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Search Screen" component={SearchScreen} />
-      <Stack.Screen name="Icafe Search Page" component={IcafeLoginPage} />
+      <Stack.Screen name="Icafe Login Page" component={IcafeLoginPage} />
       <Stack.Screen name="Icafe Billing" component={IcafeBilling} />
+      <Stack.Screen name="Icafe Page" component={IcafePage} />
+      <Stack.Screen name="Specification" component={Specification} />
+      <Stack.Screen name="Payment" component={Payment} />
     </Stack.Navigator>
   )
 }

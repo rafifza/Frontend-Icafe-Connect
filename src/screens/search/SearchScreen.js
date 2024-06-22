@@ -17,6 +17,7 @@ import starIcon from '../../../assets/images/Star.png';
 import locationIcon from '../../../assets/images/Location.png';
 import searchIcon from '../../../assets/images/Search.png';
 import ip from '../../../ip';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class SearchScreen extends Component {
   state = {
@@ -33,14 +34,23 @@ class SearchScreen extends Component {
   fetchData = async () => {
     try {
       const response = await axios.get(`${ip}/homepage/getAlliCafes`);
-      if (Array.isArray(response.data)) {
-        this.setState({data: response.data, loading: false});
+      const data = response.data;
+      if (Array.isArray(data)) {
+        this.setState({data: data, loading: false});
+        // Logging for each iCafe retrieved
+        data.forEach(async icafe => {
+          const username = await AsyncStorage.getItem(
+            `username${icafe.icafe_id}`,
+          );
+          console.log(`username${icafe.icafe_id}: ${username}`);
+        });
       } else {
-        this.setState({error: 'Unexpected response format', loading: false});
+        throw new Error('Unexpected response format');
       }
     } catch (error) {
-      this.setState({error: error.message, loading: false});
+      console.error('Error fetching data:', error);
       Alert.alert('Error', 'Failed to fetch data');
+      this.setState({error: error.message, loading: false});
     }
   };
 
@@ -52,14 +62,22 @@ class SearchScreen extends Component {
     return time.replace(/:00$/, '');
   };
 
+  navigateToIcafePage = async item => {
+    const token = await AsyncStorage.getItem(`token${item.icafe_id}`);
+    const username = await AsyncStorage.getItem(`username${item.icafe_id}`);
+
+    if (token && username) {
+      this.props.navigation.navigate('Icafe Page', {data: item});
+    } else {
+      this.props.navigation.navigate('Icafe Login Page', {data: item});
+    }
+  };
+
   renderItem = ({item}) => {
-    const {navigation} = this.props;
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() =>
-          navigation.navigate('Icafe Search Page', {data: item, loading: false})
-        }>
+        onPress={() => this.navigateToIcafePage(item)}>
         <Image source={cardImagePlaceholder} style={styles.cardImage} />
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>{item.name}</Text>

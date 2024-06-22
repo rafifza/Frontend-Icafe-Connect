@@ -14,19 +14,76 @@ import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
 import ip from '../../../ip'; // Assuming this is your backend API endpoint
 import AsyncStorage from '@react-native-async-storage/async-storage'; // If used later
+import {CommonActions} from '@react-navigation/native';
 
-// Component definition
 class IcafeLoginPage extends Component {
   state = {
-    cafeData: null,
-    loading: true,
+    username: '',
+    password: '',
+    loading: false,
     error: null,
   };
 
+  handleLogin = async () => {
+    const {username, password} = this.state;
+    const {route, navigation} = this.props;
+    const {data} = route.params; // Assuming this contains the icafe_id
+    console.log(data.icafe_id);
+    if (!username || !password) {
+      Alert.alert('Error', 'Please enter username and password.');
+      return;
+    }
+
+    try {
+      this.setState({loading: true});
+      const userId = await AsyncStorage.getItem('userid');
+      const response = await axios.post(
+        `${ip}/bindingaccountpage/validateAccount`,
+        {
+          user_id: userId,
+          icafe_id: data.icafe_id,
+          username,
+          password,
+        },
+      );
+
+      if (response.status === 200) {
+        const token = response.data.token;
+        const savedUsername = response.data.user.username;
+
+        // Save the token and username to AsyncStorage with a dynamic key based on icafe_id
+        await AsyncStorage.setItem(`token${data.icafe_id}`, token);
+        await AsyncStorage.setItem(`username${data.icafe_id}`, savedUsername);
+
+        // Log the token after setting it
+        console.log(`Token saved for icafe_id ${data.icafe_id}:`, token);
+        console.log(
+          `Username saved for icafe_id ${data.icafe_id}:`,
+          savedUsername,
+        );
+
+        Alert.alert('Success', 'Login successful');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'Search Screen'}],
+          }),
+        );
+      } else {
+        Alert.alert('Error', response.data);
+      }
+    } catch (error) {
+      console.error('Error during login:', error.message);
+      Alert.alert('Error', 'Login failed. Please try again.');
+    } finally {
+      this.setState({loading: false});
+    }
+  };
+
   render() {
-    const {navigation} = this.props;
     const {route} = this.props;
     const {data, loading, error} = route.params;
+    const {username, password} = this.state;
 
     if (loading) {
       return (
@@ -46,7 +103,6 @@ class IcafeLoginPage extends Component {
 
     return (
       <View style={styles.container}>
-        {/* Render your iCafe details */}
         <View style={styles.imageCardContainer}>
           <Image source={imageIcafePage} style={styles.imageIcafePage} />
           <View style={styles.overlay} />
@@ -67,7 +123,6 @@ class IcafeLoginPage extends Component {
             <Text style={styles.textDescription}>{data.address}</Text>
           </View>
         </View>
-        {/* Render login form */}
         <View style={styles.pcCategoriesContainer}>
           <Text style={styles.haveAccountText}>
             Have an account? Log in below
@@ -76,14 +131,20 @@ class IcafeLoginPage extends Component {
             style={styles.input}
             placeholder="Username"
             placeholderTextColor="#ffffff"
+            value={username}
+            onChangeText={text => this.setState({username: text})}
           />
           <TextInput
             style={styles.input}
             placeholder="Password"
             placeholderTextColor="#ffffff"
             secureTextEntry={true}
+            value={password}
+            onChangeText={text => this.setState({password: text})}
           />
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={this.handleLogin}>
             <Text style={styles.loginButtonText}>Log In</Text>
           </TouchableOpacity>
           <Text style={styles.orText}>Or</Text>
@@ -194,6 +255,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 10,
     backgroundColor: 'rgba(255,255,255,0.1)',
+    color: 'white',
   },
   loginButton: {
     width: '100%',

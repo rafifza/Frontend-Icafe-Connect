@@ -1,4 +1,11 @@
-import {Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import React, {Component} from 'react';
 import ewalletIcon from '../../../assets/images/Wallet.png';
 import danaIcon from '../../../assets/images/Dana.png';
@@ -6,6 +13,9 @@ import ovoIcon from '../../../assets/images/Ovo.png';
 import gopayIcon from '../../../assets/images/Gopay.png';
 import shopeepayIcon from '../../../assets/images/Shopeepay.png';
 import continueIcon from '../../../assets/images/Arrow.png';
+import axios from 'axios';
+import ip from '../../../ip';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class Payment extends Component {
   state = {
@@ -16,19 +26,62 @@ export class Payment extends Component {
     this.setState({selectedPayment: paymentMethod});
   };
 
+  handleContinuePayment = async () => {
+    const {selectedPayment} = this.state;
+    const {route, navigation} = this.props;
+    const {billing_price_id, data} = route.params;
+    const user_id = await AsyncStorage.getItem('userid');
+
+    if (!selectedPayment) {
+      Alert.alert('Error', 'Please select a payment method.');
+      return;
+    }
+    console.log(billing_price_id);
+    console.log(selectedPayment);
+    console.log(user_id);
+    try {
+      const response = await axios.post(`${ip}/paymentpage/topupBilling`, {
+        billing_price_id,
+        payment_method: selectedPayment,
+        user_id,
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', 'Payment successful!');
+        // Navigate to another screen if needed
+        navigation.navigate('SuccessScreen', {
+          paymentResponse: response.data.paymentResponse,
+        });
+      } else {
+        Alert.alert(
+          'Error',
+          response.data.error || 'Payment failed. Please try again.',
+        );
+      }
+    } catch (error) {
+      console.error('Error in handleContinuePayment:', error.message);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+    }
+  };
+
   render() {
     const {selectedPayment} = this.state;
+    const {route} = this.props;
+    const {price, hours, data, classType} = route.params;
+
     return (
       <View style={style.container}>
         <View style={style.orderSummaryContainer}>
           <View style={style.textOrderSummaryContainer}>
             <Text style={style.orderSummaryText}>Order Summary</Text>
             <Text style={style.icafeNameText}>
-              Gamer’s Paradise (VVIP Class)
+              {data} ({classType} Class)
             </Text>
-            <Text style={style.billingText}>5 Hours </Text>
+            <Text style={style.billingText}>{hours} Hours</Text>
             <View style={style.line} />
-            <Text style={style.totalText}>Total: Rp 23.000</Text>
+            <Text style={style.totalText}>
+              Total: Rp {price.toLocaleString('ID')}
+            </Text>
           </View>
         </View>
         <View style={style.paymentContainer}>
@@ -78,11 +131,15 @@ export class Payment extends Component {
               <Image source={shopeepayIcon} style={style.shopeepayIcon} />
             </TouchableOpacity>
           </View>
+          <View style={style.continueContainer}>
+            <TouchableOpacity
+              style={style.continueButton}
+              onPress={this.handleContinuePayment}>
+              <Text style={style.continueButtonText}>Continue Payment</Text>
+              <Image source={continueIcon} style={style.continueButtonIcon} />
+            </TouchableOpacity>
+          </View>
         </View>
-        <TouchableOpacity style={style.continueButton}>
-          <Text style={style.continueButtonText}>Continue Payment</Text>
-          <Image source={continueIcon} style={style.continueButtonIcon} />
-        </TouchableOpacity>
       </View>
     );
   }
@@ -216,13 +273,17 @@ const style = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'yellow',
   },
+  continueContainer: {
+    width: '90%',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
   continueButton: {
-    position: 'absolute',
+    backgroundColor: '#277CC6',
     flexDirection: 'row',
-    bottom: '15%',
-    right: '10%',
-    paddingVertical: 10,
+    padding: 10,
     borderRadius: 20,
+    justifyContent: 'flex-end',
   },
   continueButtonText: {
     color: 'white',

@@ -1,33 +1,108 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {Component} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import imageIcafePage from '../../../assets/images/GamerParadise.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
+import ip from '../../../ip';
 
-export class IcafePage extends Component {
+class IcafePage extends Component {
+  state = {
+    userBilling: {
+      regular_billing: '00:00:00',
+      vip_billing: '00:00:00',
+      vvip_billing: '00:00:00',
+    },
+    loading: true,
+    error: null,
+  };
+
+  componentDidMount() {
+    this.fetchUserBilling();
+  }
+
+  fetchUserBilling = async () => {
+    try {
+      const {route, navigation} = this.props;
+      const {data} = route.params;
+      const username = await AsyncStorage.getItem(`username${data.icafe_id}`);
+      if (!username) {
+        throw new Error('Username not found in AsyncStorage');
+      }
+      const response = await axios.get(`${ip}/homepage/getUserBilling`, {
+        params: {username: username, icafe_id: data.icafe_id},
+      });
+
+      console.log(response.data);
+
+      this.setState({userBilling: response.data, loading: false});
+    } catch (error) {
+      console.error('Error fetching user billing:', error);
+      Alert.alert('Error', 'Failed to fetch user billing data');
+      this.setState({error: error.message, loading: false});
+    }
+  };
+
+  handleNavigation = classType => {
+    const {navigation, route} = this.props;
+    const {data} = route.params;
+    navigation.navigate('Icafe Billing', {
+      icafe_id: data.icafe_id,
+      classType: classType,
+      data: data,
+    });
+  };
+
   render() {
-    const {navigation} = this.props;
+    const {userBilling, loading, error} = this.state;
+    const {route} = this.props;
+    const {data} = route.params;
+
+    if (loading) {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.imageCardContainer}>
           <Image source={imageIcafePage} style={styles.imageIcafePage} />
           <View style={styles.overlay} />
           <View style={styles.textOverlay}>
-            <Text style={styles.textTitle}>Gamer Paradise</Text>
+            <Text style={styles.textTitle}>{data.name}</Text>
             <View style={styles.iconsContainer}>
               <View style={styles.iconContainer}>
                 <Image source={workHoursIcon} style={styles.workHourIcon} />
-                <Text style={styles.workHourText}>09:00 - 21:00</Text>
+                <Text style={styles.workHourText}>
+                  {data.open_time} - {data.close_time}
+                </Text>
               </View>
               <View style={styles.iconContainer}>
                 <Image source={starIcon} style={styles.starIcon} />
-                <Text style={styles.workHourText}>5.0</Text>
+                <Text style={styles.workHourText}>{data.rating}</Text>
               </View>
             </View>
-            <Text style={styles.textDescription}>
-              Jl. KH. Ahmad Dahlan Kby. No.32, RT.3/RW.3, Kramat Pela, Kec. Kby.
-              Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12130
-            </Text>
+            <Text style={styles.textDescription}>{data.address}</Text>
           </View>
         </View>
         <View style={styles.pcCategoriesContainer}>
@@ -36,18 +111,28 @@ export class IcafePage extends Component {
         <View style={styles.billingContainer}>
           <TouchableOpacity
             style={[styles.billingClassContainer, styles.vvipContainer]}
-            onPress={() => navigation.navigate('Icafe Billing')}>
+            onPress={() => this.handleNavigation('VVIP')}>
             <Text style={styles.classTitle}>VVIP Class</Text>
-            <Text style={styles.billingText}>Sisa Billing: 03:02:30</Text>
+            <Text style={styles.billingText}>
+              Sisa Billing: {userBilling.vvip_billing}
+            </Text>
           </TouchableOpacity>
-          <View style={[styles.billingClassContainer, styles.vipContainer]}>
+          <TouchableOpacity
+            style={[styles.billingClassContainer, styles.vipContainer]}
+            onPress={() => this.handleNavigation('VIP')}>
             <Text style={styles.classTitle}>VIP Class</Text>
-            <Text style={styles.billingText}>Sisa Billing: 03:01:45</Text>
-          </View>
-          <View style={[styles.billingClassContainer, styles.regularContainer]}>
+            <Text style={styles.billingText}>
+              Sisa Billing: {userBilling.vip_billing}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.billingClassContainer, styles.regularContainer]}
+            onPress={() => this.handleNavigation('Regular')}>
             <Text style={styles.classTitle}>Regular Class</Text>
-            <Text style={styles.billingText}>Sisa Billing: 03:00:50</Text>
-          </View>
+            <Text style={styles.billingText}>
+              Sisa Billing: {userBilling.regular_billing}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
