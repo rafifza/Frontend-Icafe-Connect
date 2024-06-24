@@ -36,15 +36,24 @@ export class Payment extends Component {
       Alert.alert('Error', 'Please select a payment method.');
       return;
     }
-    console.log(billing_price_id);
-    console.log(selectedPayment);
-    console.log(user_id);
+
     try {
-      const response = await axios.post(`${ip}/paymentpage/topupBilling`, {
-        billing_price_id,
-        payment_method: selectedPayment,
-        user_id,
-      });
+      let response;
+      if (selectedPayment === 'ewallet') {
+        response = await axios.post(
+          `${ip}/paymentpage/topupBillingWithEwallet`,
+          {
+            billing_price_id,
+            user_id,
+          },
+        );
+      } else {
+        response = await axios.post(`${ip}/paymentpage/topupBilling`, {
+          billing_price_id,
+          payment_method: selectedPayment,
+          user_id,
+        });
+      }
 
       if (response.status === 200) {
         Alert.alert('Success', 'Payment successful!');

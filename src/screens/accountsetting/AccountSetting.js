@@ -10,7 +10,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CommonActions} from '@react-navigation/native';
 import React, {Component} from 'react';
-import profilPicture from '../../../assets/images/GamerParadise.png';
+import profilPicture from '../../../assets/images/Fullname-Username.png';
 import arrowIcon from '../../../assets/images/Arrow.png';
 import languageIcon from '../../../assets/images/language.png';
 import userIcon from '../../../assets/images/Fullname-Username.png';
@@ -91,8 +91,16 @@ export class AccountSetting extends Component {
 
   handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('token');
-      console.log('Token removed');
+      await AsyncStorage.multiRemove([
+        'token',
+        'username1',
+        'username2',
+        'username3',
+        'token1',
+        'token2',
+        'token3',
+      ]);
+      console.log('User data removed');
       this.props.navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -100,7 +108,7 @@ export class AccountSetting extends Component {
         }),
       );
     } catch (error) {
-      console.log('Error clearing access token:', error);
+      console.log('Error clearing user data:', error);
     }
   };
 

@@ -79,7 +79,7 @@ function Homepage({ navigation }) {
       <Stack.Screen name="Icafe" component={IcafeStack} />
       <Stack.Screen name="Ewallet History" component={EwalletHistory} />
       <Stack.Screen name="Icafe Page" component={IcafePage} />
-      <Stack.Screen name="Icafe Login" component={IcafeLoginPage} />
+      <Stack.Screen name="Icafe Login Page" component={IcafeLoginPage} />
       <Stack.Screen name="Ewallet Topup" component={PaymentEwallet} />
     </Stack.Navigator>
   )

@@ -140,12 +140,12 @@ const style = StyleSheet.create({
   },
   imageCardContainer: {
     width: '100%',
-    height: 231,
+    height: '30%',
     justifyContent: 'center',
   },
   imageIcafePage: {
     width: '100%',
-    height: 230,
+    height: '100%',
     resizeMode: 'cover',
   },
   overlay: {
@@ -162,7 +162,7 @@ const style = StyleSheet.create({
   },
   textTitle: {
     color: 'white',
-    fontSize: 30,
+    fontSize: 34,
     fontWeight: '700',
   },
   iconsContainer: {

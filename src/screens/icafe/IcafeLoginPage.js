@@ -186,16 +186,17 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    height: '30%',
   },
   imageIcafePage: {
     width: '100%',
-    height: 350,
+    height: '100%',
   },
   overlay: {
     position: 'absolute',
     width: '100%',
     top: 0,
-    height: 341,
+    height: '100%',
     backgroundColor: 'black',
     opacity: 0.5,
   },
@@ -204,11 +205,11 @@ const styles = StyleSheet.create({
     top: '50%',
     left: '50%',
     transform: [{translateX: -170}, {translateY: -50}],
-    width: '80%',
+    width: '100%',
   },
   textTitle: {
     color: 'white',
-    fontSize: 40,
+    fontSize: 34,
     fontWeight: '700',
   },
   iconsContainer: {
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
   },
   pcCategoriesContainer: {
     width: '90%',
-    marginVertical: 5,
+    marginVertical: 20,
     alignItems: 'center',
   },
   haveAccountText: {
@@ -250,6 +251,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     textAlign: 'left',
     fontWeight: '500',
+    marginBottom: 10,
   },
   input: {
     width: '100%',

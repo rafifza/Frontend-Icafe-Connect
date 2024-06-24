@@ -76,22 +76,21 @@ export class Dashboard extends Component {
     this.fetchICafeData();
   }
 
-  navigateToIcafePage = async iCafe => {
+  navigateToIcafePage = async iCafeData => {
     try {
-      const token = await AsyncStorage.getItem(`token${iCafe.icafe_id}`);
-      const username = await AsyncStorage.getItem(`username${iCafe.icafe_id}`);
       console.log('Token:', token, 'Username:', username);
-
+      const token = AsyncStorage.getItem(`token${iCafeData.icafe_id}`);
+      const username = AsyncStorage.getItem(`username${iCafeData.icafe_id}`);
       if (token && username) {
         this.props.navigation.navigate('Icafe Page', {
-          data: iCafe,
+          data: iCafeData,
         });
-        console.log('Navigating to Icafe Page with iCafe:', iCafe);
+        console.log('Navigating to Icafe Page with iCafe:');
       } else {
         this.props.navigation.navigate('Icafe Login Page', {
-          data: iCafe,
+          data: iCafeData,
         });
-        console.log('Navigating to Icafe Login Page with iCafe:', iCafe.image);
+        console.log('Navigating to Icafe Login Page with iCafe:');
       }
     } catch (error) {
       console.error('Error fetching token and username:', error);
@@ -117,17 +116,9 @@ export class Dashboard extends Component {
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <Text style={styles.helloText}>
-            Hello <Text style={{fontWeight: 'bold'}}>{nama}</Text>
+            Hello <Text style={{fontWeight: 'bold', fontSize: 30}}>{nama}</Text>
           </Text>
-          <View style={styles.inputContainer}>
-            <Image source={searchIcon} style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Search for iCafe"
-              placeholderTextColor="#FFFFFF"
-              secureTextEntry={false}
-            />
-          </View>
+
           <View style={styles.promoImageContainer}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {promoImages.map((image, index) => (
@@ -207,9 +198,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   helloText: {
-    fontSize: 20,
+    fontSize: 30,
     fontWeight: '500',
     color: 'white',
+    marginBottom: 20,
   },
   inputContainer: {
     flexDirection: 'row',

@@ -50,7 +50,7 @@ export class EditProfilePage extends Component {
   };
 
   fetchUserProfile = async () => {
-    const userId = await AsyncStorage.getItem('userid'); // Fetch user ID from AsyncStorage or wherever it's stored
+    const userId = await AsyncStorage.getItem('userid');
 
     try {
       console.log(userId);

@@ -1,49 +1,65 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View, ActivityIndicator} from 'react-native';
 import React, {Component} from 'react';
+import axios from 'axios';
 import topupIcon from '../../../assets/images/Phone.png';
 import billingIcon from '../../../assets/images/TopUp.png';
-
-const transactions = [
-  {
-    id: 1,
-    type: 'billing',
-    icafeName: 'Gamer’s Paradise',
-    date: '12 Jun 2024, 17:35',
-    amount: 10000, // Positive integer
-  },
-  {
-    id: 2,
-    type: 'topup',
-    icafeName: 'Gamer’s Paradise',
-    date: '12 Jun 2024, 17:35',
-    amount: 10000000, // Positive integer
-  },
-  // Add more transactions here
-];
-
-function formatCurrency(amount) {
-  return `Rp. ${amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
-}
+import ip from '../../../ip';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class EwalletHistory extends Component {
+  state = {
+    transactions: [],
+    loading: true,
+    error: null,
+  };
+
+  componentDidMount() {
+    this.fetchTransactions();
+  }
+
+  fetchTransactions = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userid');
+      if (!userId) {
+        throw new Error('User ID not found');
+      }
+
+      const response = await axios.get(
+        `${ip}/historypage/displayEwalletTopupHistory`,
+        {
+          params: {userid: userId},
+        },
+      );
+
+      const transactions = response.data;
+
+      if (!Array.isArray(transactions)) {
+        throw new Error('Response data is not an array');
+      }
+
+      this.setState({transactions, loading: false});
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      this.setState({loading: false, error: 'Failed to fetch transactions'});
+    }
+  };
+
+  formatCurrency(amount) {
+    return `Rp. ${amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+  }
+
   renderTransaction = transaction => {
-    const isBilling = transaction.type === 'billing';
-    const displayAmount = formatCurrency(transaction.amount);
-    const formattedAmount = isBilling
-      ? `- ${displayAmount}`
-      : `+ ${displayAmount}`;
+    const displayAmount = this.formatCurrency(transaction.topup_amount);
+    const formattedAmount = `+ ${displayAmount}`; // Assuming all are top-ups as billing is not handled here
 
     return (
-      <View key={transaction.id} style={style.billingContainer}>
-        <Image
-          source={isBilling ? billingIcon : topupIcon}
-          style={style.topupIcon}
-        />
+      <View
+        key={transaction.ewallet_transaction_id}
+        style={style.billingContainer}>
+        <Image source={topupIcon} style={style.topupIcon} />
         <View style={style.typeContainer}>
-          <Text style={style.contentTitleText}>
-            {isBilling ? 'Billing Top Up' : 'E-Wallet Top Up'}
-          </Text>
-          <Text style={style.icafeNameText}>{transaction.icafeName}</Text>
+          <Text style={style.contentTitleText}>E-Wallet Top Up</Text>
+          <Text style={style.icafeNameText}>{transaction.payment_method}</Text>
           <Text style={style.dateText}>{transaction.date}</Text>
         </View>
         <Text style={style.priceText}>{formattedAmount}</Text>
@@ -52,13 +68,31 @@ export class EwalletHistory extends Component {
   };
 
   render() {
+    const {transactions, loading, error} = this.state;
+
+    if (loading) {
+      return <ActivityIndicator size="large" color="#0000ff" />;
+    }
+
+    if (error) {
+      return (
+        <View style={style.container}>
+          <Text style={style.errorText}>{error}</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={style.container}>
         <View style={style.titleContainer}>
           <Text style={style.titleText}>E-Wallet History</Text>
         </View>
         <View style={style.contentContainer}>
-          {transactions.map(this.renderTransaction)}
+          {transactions.length === 0 ? (
+            <Text style={style.clearHistoryText}>There is no transaction</Text>
+          ) : (
+            transactions.map(this.renderTransaction)
+          )}
         </View>
       </View>
     );
@@ -124,6 +158,17 @@ const style = StyleSheet.create({
     color: 'white',
     textAlign: 'right',
     flexShrink: 1,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 18,
+    marginTop: 20,
+  },
+  clearHistoryText: {
+    color: 'white',
+    fontSize: 18,
+    marginTop: 20,
+    textAlign: 'center',
   },
 });
 

@@ -242,16 +242,17 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    height: '30%',
   },
   imageIcafePage: {
     width: '100%',
-    height: 230,
+    height: '100%',
   },
   overlay: {
     position: 'absolute',
     width: '100%',
     top: 0,
-    height: 231,
+    height: '100%',
     backgroundColor: 'black',
     opacity: 0.5,
   },
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
   },
   textTitle: {
     color: 'white',
-    fontSize: 40,
+    fontSize: 34,
     fontWeight: '700',
   },
   iconsContainer: {

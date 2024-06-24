@@ -72,12 +72,12 @@ class SearchScreen extends Component {
         this.props.navigation.navigate('Icafe Page', {
           data: item,
         });
-        console.log('Navigating to Icafe Page with item:', item);
+        console.log('Navigating to Icafe Page with item:');
       } else {
         this.props.navigation.navigate('Icafe Login Page', {
           data: item,
         });
-        console.log('Navigating to Icafe Login Page with item:', item.image);
+        console.log('Navigating to Icafe Login Page with item:');
       }
     } catch (error) {
       console.error('Error fetching token and username:', error);
