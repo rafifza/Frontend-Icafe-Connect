@@ -9,32 +9,43 @@ import {
   Alert,
 } from 'react-native';
 import axios from 'axios';
+import {useNavigation} from '@react-navigation/native';
 import Logo from '../../../assets/images/Logo.png';
 import CustomInput from '../../components/custominputs/CustomInput';
 import ip from '../../../ip';
 
-const Otp = () => {
-  const [email, setEmail] = useState('');
-
+const Otp = ({route}) => {
+  const {email} = route.params;
+  const [otp, setOtp] = useState('');
   const {height} = useWindowDimensions();
-
+  const navigation = useNavigation();
+  console.log(email);
   const handleSubmit = async () => {
+    if (!/^\d+$/.test(otp)) {
+      Alert.alert('Invalid OTP', 'Please enter a valid numeric OTP');
+      return;
+    }
+
+    const otpInt = parseInt(otp, 10);
+
     try {
-      const response = await axios.post(`${ip}/loginpage/request-otp`, {email});
+      const response = await axios.post(`${ip}/loginpage/verify-otp`, {
+        email,
+        otp: otpInt,
+      });
       if (response.status === 200) {
-        Alert.alert('Success', 'OTP sent to your email');
+        Alert.alert('Success', 'OTP verified');
+        navigation.navigate('ResetPassword', {email});
       }
     } catch (error) {
       if (error.response) {
         console.log(error.response.data);
         console.log(error.response.status);
-        Alert.alert('Error', `Error sending OTP: ${error.response.data}`);
+        Alert.alert('Error', `Error verifying OTP: ${error.response.data}`);
       } else if (error.request) {
-        // The request was made but no response was received
         console.log(error.request);
         Alert.alert('Error', 'No response received from the server');
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.log('Error', error.message);
         Alert.alert('Error', `Error: ${error.message}`);
       }
@@ -49,14 +60,14 @@ const Otp = () => {
         style={[styles.logo, {height: height * 0.3}]}
         resizeMode="contain"
       />
-      <Text style={styles.title}>Forgot your password?</Text>
-      <Text style={styles.subtitle}>
-        Please enter the email address associated with your account
+      <Text style={styles.title}>
+        An OTP Code has been sent to your email address
       </Text>
+      <Text style={styles.subtitle}>Please enter your OTP code below</Text>
       <CustomInput
-        placeholder={'Email'}
-        value={email}
-        setValue={setEmail}
+        placeholder={'OTP'}
+        value={otp}
+        setValue={setOtp}
         style={{width: '90%'}}
       />
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>

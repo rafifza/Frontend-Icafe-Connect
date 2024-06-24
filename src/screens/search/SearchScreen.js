@@ -63,13 +63,25 @@ class SearchScreen extends Component {
   };
 
   navigateToIcafePage = async item => {
-    const token = await AsyncStorage.getItem(`token${item.icafe_id}`);
-    const username = await AsyncStorage.getItem(`username${item.icafe_id}`);
+    try {
+      const token = await AsyncStorage.getItem(`token${item.icafe_id}`);
+      const username = await AsyncStorage.getItem(`username${item.icafe_id}`);
+      console.log('Token:', token, 'Username:', username);
 
-    if (token && username) {
-      this.props.navigation.navigate('Icafe Page', {data: item});
-    } else {
-      this.props.navigation.navigate('Icafe Login Page', {data: item});
+      if (token && username) {
+        this.props.navigation.navigate('Icafe Page', {
+          data: item,
+        });
+        console.log('Navigating to Icafe Page with item:', item);
+      } else {
+        this.props.navigation.navigate('Icafe Login Page', {
+          data: item,
+        });
+        console.log('Navigating to Icafe Login Page with item:', item.image);
+      }
+    } catch (error) {
+      console.error('Error fetching token and username:', error);
+      // Optionally handle the error, e.g., show an alert or navigate to an error page
     }
   };
 
@@ -78,7 +90,11 @@ class SearchScreen extends Component {
       <TouchableOpacity
         style={styles.card}
         onPress={() => this.navigateToIcafePage(item)}>
-        <Image source={cardImagePlaceholder} style={styles.cardImage} />
+        <Image
+          source={{uri: `data:image/jpeg;base64,${item.image}`}}
+          style={styles.cardImage}
+          alt={item.name}
+        />
         <View style={styles.cardContent}>
           <Text style={styles.cardTitle}>{item.name}</Text>
           <View style={styles.cardInfo}>
@@ -124,15 +140,6 @@ class SearchScreen extends Component {
 
     return (
       <View style={styles.container}>
-        <View style={styles.topContainer}>
-          <Text style={styles.location}>Your Location</Text>
-          <Image source={locationIcon} style={styles.infoIconStar} />
-        </View>
-        <View>
-          <Text style={styles.locationText}>
-            Jl. K. H. Syahdan No 9 Kemanggisan.
-          </Text>
-        </View>
         <View style={styles.searchContainerWrapper}>
           <View style={styles.searchContainer}>
             <Image source={searchIcon} style={styles.searchIcon} />
@@ -187,7 +194,7 @@ const styles = StyleSheet.create({
   searchContainerWrapper: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+    marginVertical: 20,
   },
   searchContainer: {
     flexDirection: 'row',

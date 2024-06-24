@@ -56,6 +56,7 @@ class IcafeBilling extends Component {
         });
         this.fetchBillingPrices(response.data.icafe_detail_id);
         console.log(response.data.icafe_detail_id);
+        console.log(response.data);
       } catch (error) {
         console.error('Error fetching iCafe details:', error);
         Alert.alert('Error', 'Failed to fetch iCafe data');
@@ -137,7 +138,10 @@ class IcafeBilling extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.imageCardContainer}>
-          <Image source={imageIcafePage} style={styles.imageIcafePage} />
+          <Image
+            source={{uri: `data:image/jpeg;base64,${data.image}`}}
+            style={styles.imageIcafePage}
+          />
           <View style={styles.overlay} />
           <View style={styles.textOverlay}>
             <Text style={styles.textTitle}>{data.name}</Text>

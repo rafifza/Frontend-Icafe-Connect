@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CommonActions} from '@react-navigation/native';
@@ -40,9 +41,10 @@ export class AccountSetting extends Component {
       const response = await axios.get(`${ip}/settingspage/getUserProfile`, {
         params: {userId},
       });
-
+      console.log(response.data);
       if (response.data.success) {
         const {fullname, email} = response.data.userDetails;
+        console.log(response.data.userDetails);
         this.setState({fullname, email});
       } else {
         Alert.alert('Error', 'User not found');

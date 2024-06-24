@@ -13,7 +13,6 @@ import promoImage from '../../../assets/images/Promo.jpeg';
 import walletImage from '../../../assets/images/Wallet.png';
 import topUpIcon from '../../../assets/images/TopUp.png';
 import historyIcon from '../../../assets/images/eWalletHistory.png';
-import icafeImage from '../../../assets/images/GamerParadise.png';
 import ratingIcon from '../../../assets/images/Star.png';
 import locationIcon from '../../../assets/images/Location.png';
 import axios from 'axios';
@@ -42,12 +41,17 @@ export class Dashboard extends Component {
           userid: id,
         },
       });
-
+      const response1 = await axios.get(`${ip}/homepage/geteWalletBalance`, {
+        params: {
+          userid: id,
+        },
+      });
       if (response.data && response.data.username) {
         this.setState({
           nama: response.data.username,
-          ewallet: response.data.ewallet_balance,
+          ewallet: response1.data.ewallet_balance,
         });
+        console.log(response.data.username, response1.data.ewallet_balance);
       } else {
         throw new Error('Invalid response data');
       }
@@ -72,18 +76,41 @@ export class Dashboard extends Component {
     this.fetchICafeData();
   }
 
+  navigateToIcafePage = async iCafe => {
+    try {
+      const token = await AsyncStorage.getItem(`token${iCafe.icafe_id}`);
+      const username = await AsyncStorage.getItem(`username${iCafe.icafe_id}`);
+      console.log('Token:', token, 'Username:', username);
+
+      if (token && username) {
+        this.props.navigation.navigate('Icafe Page', {
+          data: iCafe,
+        });
+        console.log('Navigating to Icafe Page with iCafe:', iCafe);
+      } else {
+        this.props.navigation.navigate('Icafe Login Page', {
+          data: iCafe,
+        });
+        console.log('Navigating to Icafe Login Page with iCafe:', iCafe.image);
+      }
+    } catch (error) {
+      console.error('Error fetching token and username:', error);
+    }
+  };
+
   render() {
     const {navigation} = this.props;
     const {nama, ewallet, iCafeData} = this.state;
 
-    // Format ewallet balance to Indonesian Rupiah (Rp xxx.xxx)
-    const formattedEwallet = ewallet.toLocaleString('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    });
+    const formattedEwallet =
+      ewallet === 0
+        ? 'Rp. 0'
+        : ewallet.toLocaleString('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+          });
 
-    // Example promo images
     const promoImages = [promoImage, promoImage, promoImage, promoImage];
 
     return (
@@ -139,8 +166,11 @@ export class Dashboard extends Component {
                 <TouchableOpacity
                   style={styles.icafeContainer}
                   key={index}
-                  onPress={() => navigation.navigate('Icafe')}>
-                  <Image source={icafeImage} style={styles.icafeImage} />
+                  onPress={() => this.navigateToIcafePage(iCafe)}>
+                  <Image
+                    source={{uri: `data:image/jpeg;base64,${iCafe.image}`}}
+                    style={styles.icafeImage}
+                  />
                   <View style={styles.icafeNameContainer}>
                     <Text style={styles.icafeName}>{iCafe.name}</Text>
                     <View style={styles.icafeRatingContainer}>
@@ -166,7 +196,6 @@ export class Dashboard extends Component {
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

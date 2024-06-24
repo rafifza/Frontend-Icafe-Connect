@@ -51,12 +51,9 @@ export class EditProfilePage extends Component {
 
   fetchUserProfile = async () => {
     const userId = await AsyncStorage.getItem('userid'); // Fetch user ID from AsyncStorage or wherever it's stored
-    if (!userId) {
-      Alert.alert('Error', 'User ID not found');
-      return;
-    }
 
     try {
+      console.log(userId);
       const response = await axios.get(`${ip}/settingspage/getUserProfile`, {
         params: {userId},
       });
@@ -116,14 +113,6 @@ export class EditProfilePage extends Component {
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Edit Profile</Text>
-        </View>
-        <View style={styles.profileContainer}>
-          <TouchableOpacity style={styles.profileImageContainer}>
-            <Image source={profileImage} style={styles.profileImage} />
-            <TouchableOpacity style={styles.editIconContainer}>
-              <Image source={editIcon} style={styles.editIcon} />
-            </TouchableOpacity>
-          </TouchableOpacity>
         </View>
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
@@ -190,6 +179,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     width: '90%',
     marginTop: 20,
+    marginBottom: 20,
     justifyContent: 'flex-start',
   },
   titleText: {

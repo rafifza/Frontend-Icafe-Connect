@@ -86,7 +86,10 @@ class IcafePage extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.imageCardContainer}>
-          <Image source={imageIcafePage} style={styles.imageIcafePage} />
+          <Image
+            source={{uri: `data:image/jpeg;base64,${data.image}`}}
+            style={styles.imageIcafePage}
+          />
           <View style={styles.overlay} />
           <View style={styles.textOverlay}>
             <Text style={styles.textTitle}>{data.name}</Text>
@@ -159,7 +162,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     top: 0,
-    height: 341,
+    height: 351,
     backgroundColor: 'black',
     opacity: 0.5,
   },

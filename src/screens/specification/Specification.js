@@ -54,7 +54,10 @@ export class Specification extends Component {
     return (
       <View style={style.container}>
         <View style={style.imageCardContainer}>
-          <Image source={imageIcafePage} style={style.imageIcafePage} />
+          <Image
+            source={{uri: `data:image/jpeg;base64,${data.image}`}}
+            style={style.imageIcafePage}
+          />
           <View style={style.overlay} />
           <View style={style.textOverlay}>
             <Text style={style.textTitle}>{data.name}</Text>

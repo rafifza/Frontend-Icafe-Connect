@@ -49,7 +49,7 @@ export class Payment extends Component {
       if (response.status === 200) {
         Alert.alert('Success', 'Payment successful!');
         // Navigate to another screen if needed
-        navigation.navigate('SuccessScreen', {
+        navigation.navigate('Search Screen', {
           paymentResponse: response.data.paymentResponse,
         });
       } else {

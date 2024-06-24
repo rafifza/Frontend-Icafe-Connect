@@ -9,32 +9,50 @@ import {
   Alert,
 } from 'react-native';
 import axios from 'axios';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Logo from '../../../assets/images/Logo.png';
 import CustomInput from '../../components/custominputs/CustomInput';
 import ip from '../../../ip';
 
-const ForgotPasswordScreen = () => {
-  const [email, setEmail] = useState('');
-  const navigation = useNavigation();
+const ResetPassword = () => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const {height} = useWindowDimensions();
+  const route = useRoute();
+  const navigation = useNavigation();
+  const {email} = route.params;
 
   const handleSubmit = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
     try {
-      const response = await axios.post(`${ip}/loginpage/request-otp`, {email});
-      console.log(email);
+      const response = await axios.post(`${ip}/loginpage/reset-password`, {
+        email,
+        newPassword: password,
+      });
       if (response.status === 200) {
-        Alert.alert('Success', 'OTP sent to your email');
-        navigation.navigate('Otp', {email});
+        Alert.alert('Success', 'Password reset successfully');
+        navigation.navigate('Login');
       }
     } catch (error) {
       if (error.response) {
-        Alert.alert('Error', `Error sending OTP: ${error.response.data}`);
+        console.log(error.response.data);
+        console.log(error.response.status);
+        Alert.alert(
+          'Error',
+          `Error resetting password: ${error.response.data}`,
+        );
       } else if (error.request) {
+        console.log(error.request);
         Alert.alert('Error', 'No response received from the server');
       } else {
+        console.log('Error', error.message);
         Alert.alert('Error', `Error: ${error.message}`);
       }
+      console.log(error.config);
     }
   };
 
@@ -45,15 +63,20 @@ const ForgotPasswordScreen = () => {
         style={[styles.logo, {height: height * 0.3}]}
         resizeMode="contain"
       />
-      <Text style={styles.title}>Forgot your password?</Text>
-      <Text style={styles.subtitle}>
-        Please enter the email address associated with your account
-      </Text>
+      <Text style={styles.title}>Please enter your new password</Text>
       <CustomInput
-        placeholder={'Email'}
-        value={email}
-        setValue={setEmail}
+        placeholder={'New Password'}
+        value={password}
+        setValue={setPassword}
         style={{width: '90%'}}
+        secureTextEntry
+      />
+      <CustomInput
+        placeholder={'Confirm Password'}
+        value={confirmPassword}
+        setValue={setConfirmPassword}
+        style={{width: '90%'}}
+        secureTextEntry
       />
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
@@ -104,4 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen;
+export default ResetPassword;

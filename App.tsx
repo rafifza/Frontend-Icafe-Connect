@@ -29,6 +29,7 @@ import Otp from './src/screens/otp/Otp';
 import PaymentEwallet from './src/screens/paymentewallet/PaymentEwallet';
 import Specification from './src/screens/specification/Specification';
 import Payment from './src/screens/payment/Payment';
+import ResetPassword from './src/screens/resetpassword/ResetPassword';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -77,6 +78,7 @@ function Homepage({ navigation }) {
       <Stack.Screen name="Dashboard" component={Dashboard} />
       <Stack.Screen name="Icafe" component={IcafeStack} />
       <Stack.Screen name="Ewallet History" component={EwalletHistory} />
+      <Stack.Screen name="Icafe Page" component={IcafePage} />
       <Stack.Screen name="Icafe Login" component={IcafeLoginPage} />
       <Stack.Screen name="Ewallet Topup" component={PaymentEwallet} />
     </Stack.Navigator>
@@ -154,7 +156,8 @@ function App() {
             <>
               <Stack.Screen name="Login" component={SignInScreen} />
               <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-              <Stack.Screen name="Otp" component={Otp} />
+                <Stack.Screen name="Otp" component={Otp} />
+                <Stack.Screen name="ResetPassword" component={ResetPassword} />
               <Stack.Screen name="SignUp" component={SignUpScreen} />
               <Stack.Screen name="MainApp" component={MyTabs} />
             </>
