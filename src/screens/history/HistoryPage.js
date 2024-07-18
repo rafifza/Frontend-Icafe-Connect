@@ -5,76 +5,88 @@ import {
   StyleSheet,
   Image,
   ScrollView,
-  Dimensions,
+  ActivityIndicator,
 } from 'react-native';
+import axios from 'axios';
 import calendarIcon from '../../../assets/images/Calendar.png';
-import testImage from '../../../assets/images/GamerParadise.png';
-
-const dummyData = [
-  {
-    id: 1,
-    icafeName: "Gamer's Paradise",
-    date: 'Monday, 21 March 2023',
-    hours: '1 Hour',
-    class: 'VVIP Class',
-    payment: 'Rp 5.000 (Gopay)',
-    image: testImage,
-  },
-  {
-    id: 2,
-    icafeName: 'Cyber Arena',
-    date: 'Tuesday, 22 March 2023',
-    hours: '2 Hours',
-    class: 'VIP Class',
-    payment: 'Rp 10.000 (Ovo)',
-    image: testImage,
-  },
-  {
-    id: 3,
-    icafeName: 'Cyber Arena',
-    date: 'Tuesday, 22 March 2023',
-    hours: '2 Hours',
-    class: 'VIP Class',
-    payment: 'Rp 10.000 (Ovo)',
-    image: testImage,
-  },
-  {
-    id: 4,
-    icafeName: 'Cyber Arena',
-    date: 'Tuesday, 22 March 2023',
-    hours: '2 Hours',
-    class: 'VIP Class',
-    payment: 'Rp 10.000 (Ovo)',
-    image: testImage,
-  },
-  {
-    id: 5,
-    icafeName: 'Cyber Arena',
-    date: 'Tuesday, 22 March 2023',
-    hours: '2 Hours',
-    class: 'VIP Class',
-    payment: 'Rp 10.000 (Ovo)',
-    image: testImage,
-  },
-  {
-    id: 6,
-    icafeName: 'Cyber Arena',
-    date: 'Tuesday, 22 March 2023',
-    hours: '2 Hours',
-    class: 'VIP Class',
-    payment: 'Rp 10.000 (Ovo)',
-    image: testImage,
-  },
-  // Add more dummy data as needed
-];
+import ip from '../../../ip';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class HistoryPage extends Component {
+  state = {
+    historyData: [],
+    loading: true,
+    error: null,
+  };
+
+  componentDidMount() {
+    this.fetchHistoryData();
+  }
+
+  fetchHistoryData = async () => {
+    try {
+      // Retrieve user_id from AsyncStorage
+      const user_id = await AsyncStorage.getItem('userid');
+      console.log(user_id);
+
+      // Make sure user_id is retrieved correctly
+      if (user_id) {
+        // Perform the Axios GET request with correct params structure
+        const response = await axios.get(
+          `${ip}/paymentpage/getTransactionBillingHistory`,
+          {params: {user_id: user_id}},
+        );
+
+        // Function to format the price
+        const formatPrice = price => {
+          return `Rp. ${price
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+        };
+
+        // Process the fetched data and format the date and payment
+        const fetchedData = response.data.map(item => {
+          const formattedDate = new Date(item.date);
+          const day = String(formattedDate.getDate()).padStart(2, '0');
+          const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+          const year = formattedDate.getFullYear();
+
+          return {
+            id: item.icafe_transaction_id,
+            icafeName: item.name,
+            date: `${day}-${month}-${year}`,
+            hours: item.hours,
+            class: item.pc_category,
+            payment: formatPrice(item.price),
+            paymentMethod: item.payment_method,
+            imageUrl: item.image_url, // Use the image URL directly
+            imageBase64: item.image, // Use the base64 image data
+          };
+        });
+
+        // Update the state with the fetched data
+        this.setState({historyData: fetchedData, loading: false});
+      } else {
+        // Handle the case where user_id is not found
+        this.setState({error: 'User ID not found', loading: false});
+      }
+    } catch (error) {
+      // Handle any errors during the request
+      this.setState({error: error.message, loading: false});
+    }
+  };
+
   renderHistoryItem = item => {
+    const hourText = item.hours > 1 ? 'Hours' : 'Hour';
+
     return (
       <View key={item.id} style={styles.containerContent}>
         <View style={styles.containerContents}>
           <View style={styles.content}>
-            <Image source={item.image} style={styles.image} />
+            <Image
+              source={{uri: `data:image/png;base64,${item.imageBase64}`}}
+              style={styles.image}
+            />
             <View style={styles.textContainer}>
               <Text style={styles.icafeName}>{item.icafeName}</Text>
               <View style={styles.dateContainer}>
@@ -85,9 +97,12 @@ export class HistoryPage extends Component {
           </View>
           <View style={styles.paymentClass}>
             <Text
-              style={styles.classText}>{`${item.hours} (${item.class})`}</Text>
+              style={
+                styles.classText
+              }>{`${item.hours} ${hourText} (${item.class})`}</Text>
             <Text style={styles.paymentText}>
-              <Text style={styles.boldDollar}>$</Text> {item.payment}
+              <Text style={styles.boldDollar}></Text> {item.payment} (
+              {item.paymentMethod})
             </Text>
           </View>
         </View>
@@ -96,17 +111,21 @@ export class HistoryPage extends Component {
   };
 
   render() {
+    const {historyData, loading, error} = this.state;
+
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>History</Text>
         </View>
         <View style={styles.containerWrapper}>
+          {loading && <ActivityIndicator size="large" color="#fff" />}
+          {error && <Text style={styles.errorText}>{error}</Text>}
           <View style={styles.scrollCont}>
             <ScrollView
               contentContainerStyle={styles.scrollContainer}
               showsVerticalScrollIndicator={false}>
-              {dummyData.map(this.renderHistoryItem)}
+              {historyData.map(this.renderHistoryItem)}
             </ScrollView>
           </View>
         </View>
@@ -123,7 +142,8 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '90%',
-    marginVertical: 20,
+    marginTop: 20,
+    marginBottom: 10,
     alignItems: 'flex-start',
   },
   title: {
@@ -141,7 +161,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollContainer: {
-    paddingVertical: 20,
+    paddingVertical: 5,
   },
   containerContent: {
     width: '100%',

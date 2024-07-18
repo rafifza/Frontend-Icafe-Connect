@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import Logo from '../../../assets/images/Logo.png';
-import CustomInput from '../../components/custominputs/CustomInput';
+import {TextInput} from 'react-native-gesture-handler';
 import {API_URL} from '@env';
 import ip from '../../../ip';
 
@@ -73,47 +73,58 @@ const SignUpScreen = ({navigation}) => {
         style={[styles.logo, {height: height * 0.3}]}
         resizeMode="contain"
       />
-      <Text style={styles.signUpBoldText}>
-        Sign Up<Text style={styles.signUpTitle}> for a new account</Text>
-      </Text>
-      <CustomInput
-        placeholder={'Full Name'}
+      <View style={styles.titleContainer}>
+        <Text style={styles.signUpBoldText}>
+          Sign Up<Text style={styles.signUpTitle}> for a new account</Text>
+        </Text>
+      </View>
+      <TextInput
+        placeholder="Full Name"
         value={fullName}
-        setValue={setFullName}
-        style={{width: '90%'}}
+        onChangeText={setFullName}
+        placeholderTextColor="#ffffff"
+        style={styles.input}
       />
-      <CustomInput
-        placeholder={'Username'}
+      <TextInput
+        placeholder="Username"
         value={username}
-        setValue={setUsername}
-        style={{width: '90%'}}
+        onChangeText={setUsername}
+        placeholderTextColor="#ffffff"
+        style={styles.input}
       />
-      <CustomInput
-        placeholder={'Email'}
+      <TextInput
+        keyboardType="email-address"
+        placeholder="Email"
         value={email}
-        setValue={setEmail}
-        style={{width: '90%'}}
+        onChangeText={setEmail}
+        placeholderTextColor="#ffffff"
+        style={styles.input}
       />
-      <CustomInput
-        placeholder={'Phone Number'}
+      <TextInput
+        keyboardType="phone-pad"
+        placeholder="Phone Number"
         value={phoneNumber}
-        setValue={setPhoneNumber}
-        style={{width: '90%'}}
+        onChangeText={setPhoneNumber}
+        placeholderTextColor="#ffffff"
+        style={styles.input}
       />
-      <CustomInput
-        placeholder={'Password'}
+      <TextInput
+        placeholder="Password"
         value={password}
-        setValue={setPassword}
+        onChangeText={setPassword}
+        placeholderTextColor="#ffffff"
         secureTextEntry={true}
-        style={{width: '90%'}}
+        style={styles.input}
       />
-      <CustomInput
-        placeholder={'Confirm Password'}
+      <TextInput
+        placeholder="Confirm Password"
         value={confirmPassword}
-        setValue={setConfirmPassword}
+        onChangeText={setConfirmPassword}
+        placeholderTextColor="#ffffff"
         secureTextEntry={true}
-        style={{width: '90%'}}
+        style={styles.input}
       />
+
       <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
         <Text style={styles.signUpButtonText}>Sign Up</Text>
       </TouchableOpacity>
@@ -133,7 +144,12 @@ const styles = StyleSheet.create({
     maxWidth: 300,
     maxHeight: 200,
     marginRight: '20%',
-    marginTop: '5%',
+  },
+  titleContainer: {
+    width: '90%',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    marginBottom: 10,
   },
   signUpTitle: {
     color: '#ffffff',
@@ -145,13 +161,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 22,
   },
-  forgotPasswordContainer: {
-    width: '80%',
-    alignItems: 'flex-end',
-    marginTop: 10,
-  },
-  forgotPasswordText: {
-    color: '#1B9DE2',
+  input: {
+    width: '90%',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 10,
+    color: '#ffffff',
+    marginVertical: 10,
+    paddingHorizontal: 10,
   },
   signUpButton: {
     backgroundColor: '#1B9DE2',

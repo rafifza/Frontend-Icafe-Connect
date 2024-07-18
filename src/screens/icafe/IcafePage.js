@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Linking,
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import imageIcafePage from '../../../assets/images/GamerParadise.png';
+import googlemapsIcon from '../../../assets/images/google-maps.png';
 import workHoursIcon from '../../../assets/images/Clock.png';
-import starIcon from '../../../assets/images/Star.png';
+import starIcon from '../../../assets/images/staricon.png';
 import ip from '../../../ip';
 
 class IcafePage extends Component {
@@ -22,6 +23,7 @@ class IcafePage extends Component {
       vip_billing: '00:00:00',
       vvip_billing: '00:00:00',
     },
+    username: '',
     loading: true,
     error: null,
   };
@@ -35,6 +37,7 @@ class IcafePage extends Component {
       const {route, navigation} = this.props;
       const {data} = route.params;
       const username = await AsyncStorage.getItem(`username${data.icafe_id}`);
+      console.log('username', username);
       if (!username) {
         throw new Error('Username not found in AsyncStorage');
       }
@@ -44,7 +47,11 @@ class IcafePage extends Component {
 
       console.log(response.data);
 
-      this.setState({userBilling: response.data, loading: false});
+      this.setState({
+        userBilling: response.data,
+        username: username,
+        loading: false,
+      });
     } catch (error) {
       console.error('Error fetching user billing:', error);
       Alert.alert('Error', 'Failed to fetch user billing data');
@@ -62,11 +69,18 @@ class IcafePage extends Component {
     });
   };
 
+  handleOpenMaps = () => {
+    const url = 'https://maps.app.goo.gl/uoS12PRAjeTrCnP79';
+    Linking.openURL(url).catch(err => console.error('An error occurred', err));
+  };
+  formatTime = time => {
+    return time.replace(/:00$/, '');
+  };
   render() {
-    const {userBilling, loading, error} = this.state;
+    const {userBilling, loading, error, username} = this.state;
+    console.log(username);
     const {route} = this.props;
     const {data} = route.params;
-
     if (loading) {
       return (
         <View style={styles.container}>
@@ -92,18 +106,36 @@ class IcafePage extends Component {
           />
           <View style={styles.overlay} />
           <View style={styles.textOverlay}>
+            <View style={styles.usernameContainer}>
+              <Text style={styles.usernameText}>Logged in as</Text>
+              <View style={styles.usernameCont}>
+                <Text style={styles.userText}>{username}</Text>
+              </View>
+            </View>
             <Text style={styles.textTitle}>{data.name}</Text>
             <View style={styles.iconsContainer}>
               <View style={styles.iconContainer}>
                 <Image source={workHoursIcon} style={styles.workHourIcon} />
                 <Text style={styles.workHourText}>
-                  {data.open_time} - {data.close_time}
+                  {this.formatTime(data.open_time)} -
+                  {this.formatTime(data.close_time)}
                 </Text>
               </View>
               <View style={styles.iconContainer}>
                 <Image source={starIcon} style={styles.starIcon} />
                 <Text style={styles.workHourText}>{data.rating}</Text>
               </View>
+              <TouchableOpacity
+                onPress={this.handleOpenMaps}
+                style={styles.locationButton}>
+                <Image
+                  source={googlemapsIcon}
+                  style={styles.locationButtonIcon}
+                />
+                <Text style={styles.locationButtonText}>
+                  Open in google maps
+                </Text>
+              </TouchableOpacity>
             </View>
             <Text style={styles.textDescription}>{data.address}</Text>
           </View>
@@ -167,6 +199,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     opacity: 0.5,
   },
+  usernameContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  usernameText: {
+    color: '#FFFFFF',
+  },
+  usernameCont: {
+    backgroundColor: '#277CC6',
+    marginHorizontal: 10,
+    padding: 5,
+    borderRadius: 10,
+  },
+  userText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
   textOverlay: {
     position: 'absolute',
     top: '50%',
@@ -183,6 +233,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     marginVertical: 10,
+    alignItems: 'center',
   },
   iconContainer: {
     flexDirection: 'row',
@@ -197,11 +248,11 @@ const styles = StyleSheet.create({
   workHourText: {
     fontSize: 16,
     color: '#FFFFFF',
+    marginRight: 5,
   },
   starIcon: {
-    width: 30,
-    height: 30,
-    marginTop: 10,
+    width: 20,
+    height: 20,
   },
   textDescription: {
     fontSize: 10,
@@ -255,6 +306,23 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#FFFFFF',
     marginTop: 5,
+  },
+  locationButton: {
+    backgroundColor: '#ffffff',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    flexDirection: 'row',
+  },
+  locationButtonIcon: {
+    width: 15,
+    height: 15,
+    marginRight: 5,
+  },
+  locationButtonText: {
+    color: 'black',
+    fontSize: 12,
+    fontWeight: '500',
   },
 });
 

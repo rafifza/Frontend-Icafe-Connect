@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 import ip from '../../../ip';
 import imageIcafePage from '../../../assets/images/GamerParadise.png';
-import workHoursIcon from '../../../assets/images/timeicon.png';
+import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/staricon.png';
 import arrowIcon from '../../../assets/images/Arrow.png';
 
@@ -36,6 +36,10 @@ class IcafeBilling extends Component {
     if (params && params.classType) {
       this.setState({classType: params.classType});
     }
+  };
+
+  formatTime = time => {
+    return time.replace(/:00$/, '');
   };
 
   fetchIcafeData = async () => {
@@ -149,7 +153,8 @@ class IcafeBilling extends Component {
               <View style={styles.iconContainer}>
                 <Image source={workHoursIcon} style={styles.workHourIcon} />
                 <Text style={styles.workHourText}>
-                  {data.open_time} - {data.close_time}
+                  {this.formatTime(data.open_time)} -
+                  {this.formatTime(data.close_time)}
                 </Text>
               </View>
               <View style={styles.iconContainer}>
@@ -272,6 +277,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     marginVertical: 10,
+    alignItems: 'center',
   },
   iconContainer: {
     flexDirection: 'row',
@@ -286,11 +292,11 @@ const styles = StyleSheet.create({
   workHourText: {
     fontSize: 16,
     color: '#FFFFFF',
+    marginRight: 5,
   },
   starIcon: {
-    width: 30,
-    height: 30,
-    marginTop: 10,
+    width: 20,
+    height: 20,
   },
   textDescription: {
     fontSize: 10,

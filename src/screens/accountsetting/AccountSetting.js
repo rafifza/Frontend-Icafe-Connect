@@ -10,7 +10,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CommonActions} from '@react-navigation/native';
 import React, {Component} from 'react';
-import profilPicture from '../../../assets/images/Fullname-Username.png';
+import profilPicture from '../../../assets/images/User.png';
 import arrowIcon from '../../../assets/images/Arrow.png';
 import languageIcon from '../../../assets/images/language.png';
 import userIcon from '../../../assets/images/Fullname-Username.png';
@@ -31,6 +31,7 @@ export class AccountSetting extends Component {
 
   async componentDidMount() {
     const userId = await AsyncStorage.getItem('userid');
+    console.log(userId);
     if (userId) {
       this.fetchUserProfile(userId);
     }
@@ -108,7 +109,7 @@ export class AccountSetting extends Component {
         }),
       );
     } catch (error) {
-      console.log('Error clearing user data:', error);
+      console.log('Error clearing user data:', error.message);
     }
   };
 
@@ -152,7 +153,7 @@ export class AccountSetting extends Component {
           <TouchableOpacity
             style={style.deleteContainer}
             onPress={this.toggleModal}>
-            <Text style={style.aboutText}>Disable Account</Text>
+            <Text style={style.aboutText}>Delete Account</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={style.logoutContainer}
@@ -168,7 +169,7 @@ export class AccountSetting extends Component {
           <View style={style.modalContainer}>
             <View style={style.modalContent}>
               <Text style={style.modalText}>
-                Are you sure you want to disable your account?
+                Are you sure you want to delete your account?
               </Text>
               <View style={style.modalButtonContainer}>
                 <TouchableOpacity
@@ -220,17 +221,20 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     marginVertical: 5,
+    marginHorizontal: 5,
   },
   emailText: {
     color: 'white',
     fontSize: 15,
     marginVertical: 5,
+    marginHorizontal: 5,
   },
   editProfileContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 5,
+    marginHorizontal: 5,
     paddingVertical: 5,
     paddingHorizontal: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.18)',

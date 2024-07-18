@@ -9,7 +9,8 @@ import {
   View,
 } from 'react-native';
 import searchIcon from '../../../assets/images/Search.png';
-import promoImage from '../../../assets/images/Promo.jpeg';
+import promoImage from '../../../assets/images/highground_ads.jpeg';
+import promoImage1 from '../../../assets/images/gamers_paradise_ads.jpeg';
 import walletImage from '../../../assets/images/Wallet.png';
 import topUpIcon from '../../../assets/images/TopUp.png';
 import historyIcon from '../../../assets/images/eWalletHistory.png';
@@ -110,7 +111,7 @@ export class Dashboard extends Component {
             minimumFractionDigits: 0,
           });
 
-    const promoImages = [promoImage, promoImage, promoImage, promoImage];
+    const promoImages = [promoImage1, promoImage];
 
     return (
       <View style={styles.container}>
@@ -241,6 +242,7 @@ const styles = StyleSheet.create({
   balanceWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginLeft: 10,
   },
   walletImage: {
     width: 13,
@@ -256,10 +258,12 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold',
     color: 'white',
+    marginLeft: 10,
   },
   topUpHistoryContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 10,
   },
   topupContainer: {
     flexDirection: 'column',
@@ -271,6 +275,7 @@ const styles = StyleSheet.create({
     height: 36,
   },
   topUpText: {
+    fontSize: 12,
     color: 'white',
     fontWeight: '700',
   },
@@ -283,6 +288,7 @@ const styles = StyleSheet.create({
     height: 36,
   },
   historyText: {
+    fontSize: 12,
     color: 'white',
     fontWeight: '700',
   },

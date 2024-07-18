@@ -5,6 +5,7 @@ import topupIcon from '../../../assets/images/Phone.png';
 import billingIcon from '../../../assets/images/TopUp.png';
 import ip from '../../../ip';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {ScrollView} from 'react-native-gesture-handler';
 
 export class EwalletHistory extends Component {
   state = {
@@ -19,16 +20,14 @@ export class EwalletHistory extends Component {
 
   fetchTransactions = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userid');
-      if (!userId) {
+      const user_id = await AsyncStorage.getItem('userid');
+      if (!user_id) {
         throw new Error('User ID not found');
       }
 
       const response = await axios.get(
-        `${ip}/historypage/displayEwalletTopupHistory`,
-        {
-          params: {userid: userId},
-        },
+        `${ip}/paymentpage/getEWalletTransactionHistory`,
+        {params: {user_id}},
       );
 
       const transactions = response.data;
@@ -45,24 +44,41 @@ export class EwalletHistory extends Component {
   };
 
   formatCurrency(amount) {
+    if (amount === undefined || amount === null) {
+      return 'Rp. 0';
+    }
     return `Rp. ${amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
   }
 
+  formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day} - ${month} - ${year} ${hours}:${minutes}`;
+  }
+
   renderTransaction = transaction => {
-    const displayAmount = this.formatCurrency(transaction.topup_amount);
-    const formattedAmount = `+ ${displayAmount}`; // Assuming all are top-ups as billing is not handled here
+    const displayAmount = this.formatCurrency(transaction.price);
+    const formattedAmount = `+ ${displayAmount}`;
+    const isEwallet = transaction.payment_method === 'e-wallet';
+    const icon = isEwallet ? topupIcon : billingIcon;
+    const title = isEwallet ? 'E-Wallet Top Up' : 'Billing Top Up';
+    const formattedDate = this.formatDate(transaction.transaction_date);
 
     return (
       <View
         key={transaction.ewallet_transaction_id}
-        style={style.billingContainer}>
-        <Image source={topupIcon} style={style.topupIcon} />
-        <View style={style.typeContainer}>
-          <Text style={style.contentTitleText}>E-Wallet Top Up</Text>
-          <Text style={style.icafeNameText}>{transaction.payment_method}</Text>
-          <Text style={style.dateText}>{transaction.date}</Text>
+        style={styles.billingContainer}>
+        <Image source={icon} style={styles.topupIcon} />
+        <View style={styles.typeContainer}>
+          <Text style={styles.contentTitleText}>{title}</Text>
+          <Text style={styles.icafeNameText}>{transaction.payment_method}</Text>
+          <Text style={styles.dateText}>{formattedDate}</Text>
         </View>
-        <Text style={style.priceText}>{formattedAmount}</Text>
+        <Text style={styles.priceText}>{formattedAmount}</Text>
       </View>
     );
   };
@@ -76,30 +92,30 @@ export class EwalletHistory extends Component {
 
     if (error) {
       return (
-        <View style={style.container}>
-          <Text style={style.errorText}>{error}</Text>
+        <View style={styles.container}>
+          <Text style={styles.errorText}>{error}</Text>
         </View>
       );
     }
 
     return (
-      <View style={style.container}>
-        <View style={style.titleContainer}>
-          <Text style={style.titleText}>E-Wallet History</Text>
+      <View style={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>E-Wallet History</Text>
         </View>
-        <View style={style.contentContainer}>
+        <ScrollView style={styles.contentContainer}>
           {transactions.length === 0 ? (
-            <Text style={style.clearHistoryText}>There is no transaction</Text>
+            <Text style={styles.clearHistoryText}>There is no transaction</Text>
           ) : (
             transactions.map(this.renderTransaction)
           )}
-        </View>
+        </ScrollView>
       </View>
     );
   }
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',

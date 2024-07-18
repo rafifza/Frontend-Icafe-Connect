@@ -79,7 +79,9 @@ class IcafeLoginPage extends Component {
       this.setState({loading: false});
     }
   };
-
+  formatTime = time => {
+    return time.replace(/:00$/, '');
+  };
   render() {
     const {route} = this.props;
     const {data, loading, error} = route.params;
@@ -110,20 +112,23 @@ class IcafeLoginPage extends Component {
           />
           <View style={styles.overlay} />
           <View style={styles.textOverlay}>
-            <Text style={styles.textTitle}>{data.name}</Text>
-            <View style={styles.iconsContainer}>
-              <View style={styles.iconContainer}>
-                <Image source={workHoursIcon} style={styles.workHourIcon} />
-                <Text style={styles.workHourText}>
-                  {data.open_time} - {data.close_time}
-                </Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.textTitle}>{data.name}</Text>
+              <View style={styles.iconsContainer}>
+                <View style={styles.iconContainer}>
+                  <Image source={workHoursIcon} style={styles.workHourIcon} />
+                  <Text style={styles.workHourText}>
+                    {this.formatTime(data.open_time)} -
+                    {this.formatTime(data.close_time)}
+                  </Text>
+                </View>
+                <View style={styles.iconContainer}>
+                  <Image source={starIcon} style={styles.starIcon} />
+                  <Text style={styles.workHourText}>{data.rating}</Text>
+                </View>
               </View>
-              <View style={styles.iconContainer}>
-                <Image source={starIcon} style={styles.starIcon} />
-                <Text style={styles.workHourText}>{data.rating}</Text>
-              </View>
+              <Text style={styles.textDescription}>{data.address}</Text>
             </View>
-            <Text style={styles.textDescription}>{data.address}</Text>
           </View>
         </View>
         <View style={styles.pcCategoriesContainer}>
@@ -207,6 +212,9 @@ const styles = StyleSheet.create({
     transform: [{translateX: -170}, {translateY: -50}],
     width: '100%',
   },
+  textContainer: {
+    width: '80%',
+  },
   textTitle: {
     color: 'white',
     fontSize: 34,
@@ -243,7 +251,7 @@ const styles = StyleSheet.create({
   },
   pcCategoriesContainer: {
     width: '90%',
-    marginVertical: 20,
+    marginVertical: 30,
     alignItems: 'center',
   },
   haveAccountText: {
@@ -278,7 +286,7 @@ const styles = StyleSheet.create({
   },
   orText: {
     color: 'white',
-    marginTop: 10,
+    marginVertical: 10,
   },
   haveAccContainer: {
     padding: 15,

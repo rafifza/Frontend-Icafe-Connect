@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { SafeAreaView, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -20,7 +20,7 @@ import IcafeBilling from './src/screens/icafebilling/IcafeBilling';
 import HomeIcon from './assets/images/Home.png';
 import SearchIcon from './assets/images/Search.png';
 import HistoryIcon from './assets/images/History.png';
-import UserIcon from './assets/images/User.png';
+import UserIcon from './assets/images/Fullname-Username.png';
 import IcafePageSearch from './src/screens/icafe/IcafePageSearch';
 import SignInScreen from './src/screens/signin/SignInScreen';
 import ForgotPasswordScreen from './src/screens/forgotpassword/ForgotPasswordScreen';
@@ -156,8 +156,8 @@ function App() {
             <>
               <Stack.Screen name="Login" component={SignInScreen} />
               <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-                <Stack.Screen name="Otp" component={Otp} />
-                <Stack.Screen name="ResetPassword" component={ResetPassword} />
+              <Stack.Screen name="Otp" component={Otp} />
+              <Stack.Screen name="ResetPassword" component={ResetPassword} />
               <Stack.Screen name="SignUp" component={SignUpScreen} />
               <Stack.Screen name="MainApp" component={MyTabs} />
             </>

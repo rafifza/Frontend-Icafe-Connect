@@ -52,7 +52,7 @@ export class PaymentEwallet extends Component {
     }
 
     const cleanedTopupAmount = topupAmount.replace(/\./g, '');
-
+    console.log(userId, cleanedTopupAmount, selectedPayment);
     try {
       const response = await axios.post(`${ip}/paymentpage/topupEwallet`, {
         user_id: userId,
@@ -91,38 +91,11 @@ export class PaymentEwallet extends Component {
             <TouchableOpacity
               style={[
                 style.paymentMethodContainer,
-                selectedPayment === 'dana' && style.selected,
-                {backgroundColor: '#2196F3'},
-              ]}
-              onPress={() => this.handlePaymentSelection('dana')}>
-              <Image source={danaIcon} style={style.danaIcon} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                style.paymentMethodContainer,
-                selectedPayment === 'ovo' && style.selected,
-                {backgroundColor: '#4E3394'},
-              ]}
-              onPress={() => this.handlePaymentSelection('ovo')}>
-              <Image source={ovoIcon} style={style.ovoIcon} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                style.paymentMethodContainer,
                 selectedPayment === 'gopay' && style.selected,
                 {backgroundColor: '#E6E6E6'},
               ]}
               onPress={() => this.handlePaymentSelection('gopay')}>
               <Image source={gopayIcon} style={style.gopayIcon} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                style.paymentMethodContainer,
-                selectedPayment === 'shopeepay' && style.selected,
-                {backgroundColor: '#F04D2C'},
-              ]}
-              onPress={() => this.handlePaymentSelection('shopeepay')}>
-              <Image source={shopeepayIcon} style={style.shopeepayIcon} />
             </TouchableOpacity>
           </View>
           <TextInput
@@ -130,7 +103,7 @@ export class PaymentEwallet extends Component {
             placeholder="Enter top-up amount"
             placeholderTextColor="#ffffff"
             keyboardType="numeric"
-            value={`Rp ${topupAmount}`}
+            value={`Rp. ${topupAmount}`}
             onChangeText={this.handleTopupAmountChange}
           />
         </View>
@@ -206,7 +179,8 @@ const style = StyleSheet.create({
     width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 15,
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     marginVertical: 20,
     color: '#ffffff',
   },

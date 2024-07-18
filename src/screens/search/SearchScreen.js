@@ -71,6 +71,7 @@ class SearchScreen extends Component {
       if (token && username) {
         this.props.navigation.navigate('Icafe Page', {
           data: item,
+          username: username,
         });
         console.log('Navigating to Icafe Page with item:');
       } else {
@@ -118,10 +119,11 @@ class SearchScreen extends Component {
 
   render() {
     const {searchQuery, data, loading, error} = this.state;
-    const filteredData = data.filter(item =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    const filteredData = data.filter(
+      item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.address.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-
     if (loading) {
       return (
         <View style={styles.container}>

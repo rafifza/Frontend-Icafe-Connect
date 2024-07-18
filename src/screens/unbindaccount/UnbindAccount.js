@@ -1,3 +1,4 @@
+import React, {Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,104 +8,107 @@ import {
   Image,
   Modal,
 } from 'react-native';
-import React, {Component} from 'react';
+import axios from 'axios';
 import xIcon from '../../../assets/images/X.png';
-
-const dummyData = [
-  {
-    id: 1,
-    icafeName: "Gamer's Paradise",
-    loggedInAs: 'User1',
-  },
-  {
-    id: 2,
-    icafeName: 'Cyber Arena',
-    loggedInAs: 'User2',
-  },
-  {
-    id: 4,
-    icafeName: 'Net Cafe',
-    loggedInAs: 'User3',
-  },
-  {
-    id: 5,
-    icafeName: 'Net Cafe',
-    loggedInAs: 'User3',
-  },
-  {
-    id: 6,
-    icafeName: 'Net Cafe',
-    loggedInAs: 'User3',
-  },
-  {
-    id: 7,
-    icafeName: 'Net Cafe',
-    loggedInAs: 'User5',
-  },
-  {
-    id: 8,
-    icafeName: 'Net Cafe',
-    loggedInAs: 'User3',
-  },
-  {
-    id: 9,
-    icafeName: 'Net Cafe',
-    loggedInAs: 'User3',
-  },
-  // Add more dummy data as needed
-];
+import ip from '../../../ip';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class UnbindAccount extends Component {
   state = {
     modalVisible: false,
     selectedItem: null,
+    accounts: [],
+    user_id: null,
+  };
+
+  async componentDidMount() {
+    const user_id = await AsyncStorage.getItem('userid');
+    console.log(user_id);
+    if (user_id) {
+      this.setState({user_id}, () => {
+        this.fetchAccounts();
+      });
+    }
+  }
+
+  fetchAccounts = async () => {
+    const {user_id} = this.state;
+    console.log('UserID:', user_id);
+    try {
+      const response = await axios.get(
+        `${ip}/bindingaccountpage/getBindAccount`,
+        {params: {user_id}},
+      );
+      const data = response.data;
+      console.log('Fetched data:', data);
+      this.setState({accounts: data});
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+    }
   };
 
   toggleModal = item => {
     this.setState({modalVisible: !this.state.modalVisible, selectedItem: item});
   };
 
+  unbindAccount = async bindingId => {
+    try {
+      console.log('Binding ID:', bindingId);
+      const response = await axios.post(
+        `${ip}/bindingaccountpage/unbindAccount`,
+        {bindingId},
+      );
+      if (response.status === 201) {
+        this.fetchAccounts();
+      } else {
+        console.error('Failed to unbind account');
+      }
+    } catch (error) {
+      console.error('Error unbinding account:', error);
+    }
+  };
+
   confirmDeleteItem = () => {
     const {selectedItem} = this.state;
-    // Implement the actual delete functionality here
-    // For example, you could update the state to remove the item
-    console.log(`Deleted item with id ${selectedItem.id}`);
+    if (selectedItem) {
+      this.unbindAccount(selectedItem.binding_id);
+    }
     this.toggleModal(null);
   };
 
   renderItem = ({item}) => (
-    <View style={style.itemContainer}>
-      <View style={style.textContainer}>
-        <Text style={style.icafeName}>{item.icafeName}</Text>
-        <View style={style.loggedInAsWrapper}>
-          <Text style={style.loggedInAsText}>Logged in as: </Text>
-          <View style={style.loggedInAsContainer}>
-            <Text style={style.loggedInAs}>{item.loggedInAs}</Text>
+    <View style={styles.itemContainer}>
+      <View style={styles.textContainer}>
+        <Text style={styles.icafeName}>{item.name}</Text>
+        <View style={styles.loggedInAsWrapper}>
+          <Text style={styles.loggedInAsText}>Logged in as: </Text>
+          <View style={styles.loggedInAsContainer}>
+            <Text style={styles.loggedInAs}>{item.username_binding}</Text>
           </View>
         </View>
       </View>
       <TouchableOpacity
-        style={style.deleteButton}
+        style={styles.deleteButton}
         onPress={() => this.toggleModal(item)}>
-        <Image source={xIcon} style={style.deleteButtonImage} />
+        <Image source={xIcon} style={styles.deleteButtonImage} />
       </TouchableOpacity>
     </View>
   );
 
   render() {
-    const {modalVisible, selectedItem} = this.state;
+    const {modalVisible, selectedItem, accounts} = this.state;
     return (
-      <View style={style.container}>
-        <View style={style.containerContent}>
-          <View style={style.titleContainer}>
-            <Text style={style.titleText}>Unbind Account</Text>
+      <View style={styles.container}>
+        <View style={styles.containerContent}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>Unbind Account</Text>
           </View>
-          <View style={style.listWrapper}>
+          <View style={styles.listWrapper}>
             <FlatList
-              data={dummyData}
+              data={accounts}
               renderItem={this.renderItem}
-              keyExtractor={item => item.id.toString()}
-              contentContainerStyle={style.listContainer}
+              keyExtractor={item => item.binding_id.toString()}
+              contentContainerStyle={styles.listContainer}
               showsVerticalScrollIndicator={false}
             />
           </View>
@@ -114,22 +118,21 @@ class UnbindAccount extends Component {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => this.toggleModal(null)}>
-            <View style={style.modalBackground}>
-              <View style={style.modalContainer}>
-                <Text style={style.modalMessage}>
-                  Are you sure you want to unbind {selectedItem.icafeName}{' '}
-                  account?
+            <View style={styles.modalBackground}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalMessage}>
+                  Are you sure you want to unbind {selectedItem.name} account?
                 </Text>
-                <View style={style.modalButtons}>
+                <View style={styles.modalButtons}>
                   <TouchableOpacity
-                    style={[style.modalButton, style.cancelButton]}
+                    style={[styles.modalButton, styles.cancelButton]}
                     onPress={() => this.toggleModal(null)}>
-                    <Text style={style.buttonText}>Cancel</Text>
+                    <Text style={styles.buttonText}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={[style.modalButton, style.confirmButton]}
+                    style={[styles.modalButton, styles.confirmButton]}
                     onPress={this.confirmDeleteItem}>
-                    <Text style={style.buttonText}>OK</Text>
+                    <Text style={styles.buttonText}>OK</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -141,7 +144,7 @@ class UnbindAccount extends Component {
   }
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#00072B',
@@ -171,7 +174,7 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 20,
     marginVertical: 10,
   },
   textContainer: {

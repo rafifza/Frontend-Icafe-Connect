@@ -1,7 +1,7 @@
 import {Text, View, StyleSheet, Image} from 'react-native';
 import React, {Component} from 'react';
 import imageIcafePage from '../../../assets/images/GamerParadise.png';
-import workHoursIcon from '../../../assets/images/timeicon.png';
+import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/staricon.png';
 import processorIcon from '../../../assets/images/Processor.png';
 import videocardIcon from '../../../assets/images/VideoCard.png';
@@ -11,6 +11,20 @@ import mouseIcon from '../../../assets/images/Mouse.png';
 import headphoneIcon from '../../../assets/images/Headphones.png';
 import axios from 'axios';
 import ip from '../../../ip';
+
+const fetchSpecification = async icafe_detail_id => {
+  try {
+    const response = await axios.get(
+      `${ip}/icafepage/getComputerSpecifications`,
+      {
+        params: {icafe_detail_id},
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching data');
+  }
+};
 
 export class Specification extends Component {
   constructor(props) {
@@ -22,35 +36,37 @@ export class Specification extends Component {
     };
   }
 
+  formatTime = time => {
+    return time.replace(/:00$/, '');
+  };
+
   async componentDidMount() {
     const {route} = this.props;
     const {icafe_detail_id} = route.params;
 
     try {
-      const response = await axios.get(
-        `${ip}/icafepage/getComputerSpecifications`,
-        {
-          params: {icafe_detail_id},
-        },
-      );
-      const specifications = response.data;
+      const specifications = await fetchSpecification(icafe_detail_id);
       this.setState({specifications, loading: false});
       console.log(specifications);
     } catch (error) {
-      this.setState({error: 'Error fetching data', loading: false});
+      this.setState({error: error.message, loading: false});
       console.error('Error fetching data:', error);
     }
   }
+
   render() {
     const {route} = this.props;
     const {data, classType} = route.params;
     const {specifications, loading, error} = this.state;
+
     if (loading) {
       return <Text>Loading...</Text>;
     }
+
     if (error) {
       return <Text>{error}</Text>;
     }
+
     return (
       <View style={style.container}>
         <View style={style.imageCardContainer}>
@@ -65,11 +81,12 @@ export class Specification extends Component {
               <View style={style.iconContainer}>
                 <Image source={workHoursIcon} style={style.icon} />
                 <Text style={style.iconText}>
-                  {data.open_time} - {data.close_time}
+                  {this.formatTime(data.open_time)} -{' '}
+                  {this.formatTime(data.close_time)}
                 </Text>
               </View>
               <View style={style.iconContainer}>
-                <Image source={starIcon} style={style.icon} />
+                <Image source={starIcon} style={style.starIcon} />
                 <Text style={style.iconText}>{data.rating}</Text>
               </View>
             </View>
@@ -78,9 +95,10 @@ export class Specification extends Component {
         </View>
         <View style={style.contentContainer}>
           <View
-            style={
-              (style.classContainer, this.getPriceContainerStyle(classType))
-            }>
+            style={[
+              style.classContainer,
+              this.getPriceContainerStyle(classType),
+            ]}>
             <Text style={style.classText}>{classType} Class</Text>
           </View>
           <View style={style.descriptionContainer}>
@@ -119,6 +137,7 @@ export class Specification extends Component {
       </View>
     );
   }
+
   getPriceContainerStyle = classType => {
     switch (classType) {
       case 'VVIP':
@@ -136,6 +155,7 @@ export class Specification extends Component {
 const style = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
     backgroundColor: '#00072B',
   },
   imageCardContainer: {
@@ -173,8 +193,14 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     marginRight: 20,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   icon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+  },
+  starIcon: {
     width: 20,
     height: 20,
     marginRight: 5,

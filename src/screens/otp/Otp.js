@@ -7,11 +7,11 @@ import {
   TouchableOpacity,
   Text,
   Alert,
+  TextInput,
 } from 'react-native';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import Logo from '../../../assets/images/Logo.png';
-import CustomInput from '../../components/custominputs/CustomInput';
 import ip from '../../../ip';
 
 const Otp = ({route}) => {
@@ -20,6 +20,7 @@ const Otp = ({route}) => {
   const {height} = useWindowDimensions();
   const navigation = useNavigation();
   console.log(email);
+
   const handleSubmit = async () => {
     if (!/^\d+$/.test(otp)) {
       Alert.alert('Invalid OTP', 'Please enter a valid numeric OTP');
@@ -64,11 +65,13 @@ const Otp = ({route}) => {
         An OTP Code has been sent to your email address
       </Text>
       <Text style={styles.subtitle}>Please enter your OTP code below</Text>
-      <CustomInput
-        placeholder={'OTP'}
+      <TextInput
+        placeholder="OTP"
         value={otp}
-        setValue={setOtp}
-        style={{width: '90%'}}
+        onChangeText={setOtp}
+        style={styles.input}
+        keyboardType="numeric"
+        placeholderTextColor="#ffffff"
       />
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
@@ -104,6 +107,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: '#ffffff',
     width: '90%',
+  },
+  input: {
+    width: '90%',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 10,
+    color: '#ffffff',
+    marginVertical: 10,
+    paddingHorizontal: 10,
   },
   submitButton: {
     backgroundColor: '#1B9DE2',

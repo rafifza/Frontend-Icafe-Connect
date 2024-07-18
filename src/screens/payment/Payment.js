@@ -30,7 +30,7 @@ export class Payment extends Component {
     const {selectedPayment} = this.state;
     const {route, navigation} = this.props;
     const {billing_price_id, data} = route.params;
-    const user_id = await AsyncStorage.getItem('userid');
+    const user_id = Number(await AsyncStorage.getItem('userid'));
 
     if (!selectedPayment) {
       Alert.alert('Error', 'Please select a payment method.');
@@ -107,22 +107,7 @@ export class Payment extends Component {
               <Image source={ewalletIcon} />
               <Text style={style.ewalletText}>Your e-wallet</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                style.danaContainer,
-                selectedPayment === 'dana' && style.selected,
-              ]}
-              onPress={() => this.handlePaymentSelection('dana')}>
-              <Image source={danaIcon} style={style.danaIcon} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                style.ovoContainer,
-                selectedPayment === 'ovo' && style.selected,
-              ]}
-              onPress={() => this.handlePaymentSelection('ovo')}>
-              <Image source={ovoIcon} style={style.ovoIcon} />
-            </TouchableOpacity>
+
             <TouchableOpacity
               style={[
                 style.gopayContainer,
@@ -130,14 +115,6 @@ export class Payment extends Component {
               ]}
               onPress={() => this.handlePaymentSelection('gopay')}>
               <Image source={gopayIcon} style={style.gopayIcon} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                style.shopeepayContainer,
-                selectedPayment === 'shopeepay' && style.selected,
-              ]}
-              onPress={() => this.handlePaymentSelection('shopeepay')}>
-              <Image source={shopeepayIcon} style={style.shopeepayIcon} />
             </TouchableOpacity>
           </View>
           <View style={style.continueContainer}>
@@ -290,8 +267,10 @@ const style = StyleSheet.create({
   continueButton: {
     backgroundColor: '#277CC6',
     flexDirection: 'row',
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 20,
+    marginVertical: 15,
     justifyContent: 'flex-end',
   },
   continueButtonText: {

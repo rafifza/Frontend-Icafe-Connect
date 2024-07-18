@@ -44,6 +44,7 @@ const SignInScreen = () => {
         if (token) {
           await AsyncStorage.setItem('token', token);
           await AsyncStorage.setItem('userid', userid);
+          console.log(userid);
           navigation.navigate('MainApp');
         } else {
           Alert.alert('Error', 'Token is null');
