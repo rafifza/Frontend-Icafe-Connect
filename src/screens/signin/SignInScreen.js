@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Image,
@@ -7,21 +7,40 @@ import {
   TouchableOpacity,
   Text,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Logo from '../../../assets/images/Logo.png';
 import {useNavigation} from '@react-navigation/native';
 import CustomInput from '../../components/custominputs/CustomInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {API_URL} from '@env';
 import ip from '../../../ip';
 
 const SignInScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const [loading, setLoading] = useState(true);
   const {height} = useWindowDimensions();
   const navigation = useNavigation();
+
+  // Check for token on component mount
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          navigation.navigate('MainApp');
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error checking token:', error);
+        setLoading(false);
+      }
+    };
+
+    checkToken();
+  }, [navigation]);
 
   const handleSignIn = async () => {
     try {
@@ -57,6 +76,14 @@ const SignInScreen = () => {
       Alert.alert('Error', 'Something went wrong. Please try again later.');
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#1B9DE2" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -137,6 +164,12 @@ const styles = StyleSheet.create({
   signUpLink: {
     fontWeight: 'bold',
     color: '#1B9DE2',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#00072B',
   },
 });
 

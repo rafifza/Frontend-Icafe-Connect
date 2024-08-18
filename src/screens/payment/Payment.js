@@ -29,7 +29,11 @@ export class Payment extends Component {
   handleContinuePayment = async () => {
     const {selectedPayment} = this.state;
     const {route, navigation} = this.props;
+
     const {billing_price_id, data} = route.params;
+    const icafe_id = route.params.icafe_id;
+    console.log(icafe_id);
+
     const user_id = Number(await AsyncStorage.getItem('userid'));
 
     if (!selectedPayment) {
@@ -45,6 +49,7 @@ export class Payment extends Component {
           {
             billing_price_id,
             user_id,
+            icafe_id,
           },
         );
       } else {
@@ -52,6 +57,7 @@ export class Payment extends Component {
           billing_price_id,
           payment_method: selectedPayment,
           user_id,
+          icafe_id,
         });
       }
 

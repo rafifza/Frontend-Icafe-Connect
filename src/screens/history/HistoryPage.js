@@ -36,7 +36,7 @@ export class HistoryPage extends Component {
           `${ip}/paymentpage/getTransactionBillingHistory`,
           {params: {user_id: user_id}},
         );
-
+  
         // Function to format the price
         const formatPrice = price => {
           return `Rp. ${price
@@ -55,12 +55,13 @@ export class HistoryPage extends Component {
             id: item.icafe_transaction_id,
             icafeName: item.name,
             date: `${day}-${month}-${year}`,
+            time: `${item.time}`,
             hours: item.hours,
             class: item.pc_category,
             payment: formatPrice(item.price),
             paymentMethod: item.payment_method,
-            imageUrl: item.image_url, // Use the image URL directly
-            imageBase64: item.image, // Use the base64 image data
+            imageUrl: item.image_url,
+            imageBase64: item.image,
           };
         });
 
@@ -76,11 +77,12 @@ export class HistoryPage extends Component {
     }
   };
 
-  renderHistoryItem = item => {
+  renderHistoryItem = (item, index) => {
     const hourText = item.hours > 1 ? 'Hours' : 'Hour';
+    const uniqueKey = `${item.id}-${index}`; // Create a unique key by combining id and index
 
     return (
-      <View key={item.id} style={styles.containerContent}>
+      <View key={uniqueKey} style={styles.containerContent}>
         <View style={styles.containerContents}>
           <View style={styles.content}>
             <Image
@@ -91,7 +93,9 @@ export class HistoryPage extends Component {
               <Text style={styles.icafeName}>{item.icafeName}</Text>
               <View style={styles.dateContainer}>
                 <Image source={calendarIcon} style={styles.icon} />
-                <Text style={styles.calendarText}>{item.date}</Text>
+                <Text style={styles.calendarText}>
+                  {item.time} | {item.date}
+                </Text>
               </View>
             </View>
           </View>
@@ -101,8 +105,7 @@ export class HistoryPage extends Component {
                 styles.classText
               }>{`${item.hours} ${hourText} (${item.class})`}</Text>
             <Text style={styles.paymentText}>
-              <Text style={styles.boldDollar}></Text> {item.payment} (
-              {item.paymentMethod})
+              {item.payment} ({item.paymentMethod})
             </Text>
           </View>
         </View>
@@ -125,7 +128,9 @@ export class HistoryPage extends Component {
             <ScrollView
               contentContainerStyle={styles.scrollContainer}
               showsVerticalScrollIndicator={false}>
-              {historyData.map(this.renderHistoryItem)}
+              {historyData.map((item, index) =>
+                this.renderHistoryItem(item, index),
+              )}
             </ScrollView>
           </View>
         </View>

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   BackHandler,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import Logo from '../../../assets/images/Logo.png';
@@ -67,77 +68,81 @@ const SignUpScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={Logo}
-        style={[styles.logo, {height: height * 0.3}]}
-        resizeMode="contain"
-      />
-      <View style={styles.titleContainer}>
-        <Text style={styles.signUpBoldText}>
-          Sign Up<Text style={styles.signUpTitle}> for a new account</Text>
-        </Text>
-      </View>
-      <TextInput
-        placeholder="Full Name"
-        value={fullName}
-        onChangeText={setFullName}
-        placeholderTextColor="#ffffff"
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        placeholderTextColor="#ffffff"
-        style={styles.input}
-      />
-      <TextInput
-        keyboardType="email-address"
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        placeholderTextColor="#ffffff"
-        style={styles.input}
-      />
-      <TextInput
-        keyboardType="phone-pad"
-        placeholder="Phone Number"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        placeholderTextColor="#ffffff"
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        placeholderTextColor="#ffffff"
-        secureTextEntry={true}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        placeholderTextColor="#ffffff"
-        secureTextEntry={true}
-        style={styles.input}
-      />
+    <ScrollView style={styles.container}>
+      <View style={styles.contentContainer}>
+        <Image
+          source={Logo}
+          style={[styles.logo, {height: height * 0.3}]}
+          resizeMode="contain"
+        />
+        <View style={styles.titleContainer}>
+          <Text style={styles.signUpBoldText}>
+            Sign Up<Text style={styles.signUpTitle}> for a new account</Text>
+          </Text>
+        </View>
+        <TextInput
+          placeholder="Full Name"
+          value={fullName}
+          onChangeText={setFullName}
+          placeholderTextColor="#ffffff"
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+          placeholderTextColor="#ffffff"
+          style={styles.input}
+        />
+        <TextInput
+          keyboardType="email-address"
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          placeholderTextColor="#ffffff"
+          style={styles.input}
+        />
+        <TextInput
+          keyboardType="phone-pad"
+          placeholder="Phone Number"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+          placeholderTextColor="#ffffff"
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          placeholderTextColor="#ffffff"
+          secureTextEntry={true}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          placeholderTextColor="#ffffff"
+          secureTextEntry={true}
+          style={styles.input}
+        />
 
-      <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
-        <Text style={styles.signUpButtonText}>Sign Up</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
+          <Text style={styles.signUpButtonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     width: '100%',
     backgroundColor: '#00072B',
+  },
+  contentContainer: {
+    alignItems: 'center',
   },
   logo: {
     width: '60%',

@@ -45,6 +45,7 @@ class IcafeBilling extends Component {
   fetchIcafeData = async () => {
     const {route} = this.props;
     const {params} = route;
+    console.log(params.classType);
     if (params && params.icafe_id && params.classType) {
       try {
         const response = await axios.get(`${ip}/icafepage/getPCBillingInfo`, {
@@ -57,10 +58,11 @@ class IcafeBilling extends Component {
           icafeData: response.data,
           loading: false,
           icafe_detail_id: response.data.icafe_detail_id,
+          icafe_id: params.icafe_id,
         });
-        this.fetchBillingPrices(response.data.icafe_detail_id);
+        this.fetchBillingPrices(response.data.icafe_detail_id, params.icafe_id);
+
         console.log(response.data.icafe_detail_id);
-        console.log(response.data);
       } catch (error) {
         console.error('Error fetching iCafe details:', error);
         Alert.alert('Error', 'Failed to fetch iCafe data');
@@ -73,10 +75,11 @@ class IcafeBilling extends Component {
     }
   };
 
-  fetchBillingPrices = async icafe_detail_id => {
+  fetchBillingPrices = async (icafe_detail_id, icafe_id) => {
     try {
+      console.log(icafe_id);
       const response = await axios.get(`${ip}/icafepage/getBillingPrices`, {
-        params: {icafe_detail_id},
+        params: {icafe_detail_id, icafe_id},
       });
       this.setState({prices: response.data});
     } catch (error) {
@@ -88,34 +91,31 @@ class IcafeBilling extends Component {
   navigateToSpecification = () => {
     const {navigation} = this.props;
     const {route} = this.props;
-    const {icafe_detail_id} = this.state;
+    const {icafe_detail_id, icafe_id} = this.state;
+    console.log('icafe_id:', icafe_id);
+
     navigation.navigate('Specification', {
       data: route.params.data,
       icafe_detail_id: icafe_detail_id,
+      icafe_id: icafe_id,
       classType: route.params.classType,
     });
     console.log(icafe_detail_id);
-    console.log(route.params.data);
+
     console.log(route.params.classType);
   };
 
-  handleBuyButtonPress = (price, hours, billing_price_id) => {
-    const {navigation} = this.props;
-    const {route} = this.props;
+  handleBuyButtonPress = (price, hours, billing_price_id, icafe_id) => {
+    const {navigation, route} = this.props;
     navigation.navigate('Payment', {
       price,
       hours,
       billing_price_id,
       data: route.params.data.name,
       classType: route.params.classType,
+      icafe_id: icafe_id,
     });
-    console.log(
-      price,
-      hours,
-      billing_price_id,
-      route.params.data.name,
-      route.params.classType,
-    );
+    console.log('icafe_id:', icafe_id);
   };
 
   render() {
@@ -211,6 +211,7 @@ class IcafeBilling extends Component {
                     price.price,
                     price.hours,
                     price.billing_price_id,
+                    this.state.icafe_id,
                   )
                 }>
                 <Text style={styles.buyButtonText}>Buy</Text>

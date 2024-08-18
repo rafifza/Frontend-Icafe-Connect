@@ -79,19 +79,31 @@ export class Dashboard extends Component {
 
   navigateToIcafePage = async iCafeData => {
     try {
-      console.log('Token:', token, 'Username:', username);
-      const token = AsyncStorage.getItem(`token${iCafeData.icafe_id}`);
-      const username = AsyncStorage.getItem(`username${iCafeData.icafe_id}`);
+      const token = await AsyncStorage.getItem(`token${iCafeData.icafe_id}`);
+      const username = await AsyncStorage.getItem(
+        `username${iCafeData.icafe_id}`,
+      );
+
+      // Check if token and username are defined
       if (token && username) {
         this.props.navigation.navigate('Icafe Page', {
           data: iCafeData,
+          username: username,
         });
-        console.log('Navigating to Icafe Page with iCafe:');
+        console.log(
+          'Navigating to Icafe Page with iCafe:',
+          iCafeData.name,
+          iCafeData.close_time,
+          iCafeData.open_time,
+        );
       } else {
-        this.props.navigation.navigate('Icafe Login Page', {
+        this.props.navigation.navigate('Icafe Login Page Dashboard', {
           data: iCafeData,
         });
-        console.log('Navigating to Icafe Login Page with iCafe:');
+        console.log(
+          'Navigating to Icafe Login Page with iCafe:',
+          iCafeData.name,
+        );
       }
     } catch (error) {
       console.error('Error fetching token and username:', error);

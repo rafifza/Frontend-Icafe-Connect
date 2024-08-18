@@ -14,8 +14,8 @@ export class EwalletHistory extends Component {
     error: null,
   };
 
-  componentDidMount() {
-    this.fetchTransactions();
+  async componentDidMount() {
+    await this.fetchTransactions();
   }
 
   fetchTransactions = async () => {
@@ -31,6 +31,8 @@ export class EwalletHistory extends Component {
       );
 
       const transactions = response.data;
+
+      console.log('Fetched transactions:', transactions); // Log response data
 
       if (!Array.isArray(transactions)) {
         throw new Error('Response data is not an array');
@@ -50,33 +52,35 @@ export class EwalletHistory extends Component {
     return `Rp. ${amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
   }
 
-  formatDate(dateString) {
+  formatDate = dateString => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${day} - ${month} - ${year} ${hours}:${minutes}`;
-  }
+    return `${day}-${month}-${year}`;
+  };
 
-  renderTransaction = transaction => {
+  renderTransaction = (transaction, index) => {
     const displayAmount = this.formatCurrency(transaction.price);
-    const formattedAmount = `+ ${displayAmount}`;
+    const formattedAmount =
+      transaction.payment_method === 'e-wallet'
+        ? `+ ${displayAmount}`
+        : `- ${displayAmount}`;
     const isEwallet = transaction.payment_method === 'e-wallet';
     const icon = isEwallet ? topupIcon : billingIcon;
     const title = isEwallet ? 'E-Wallet Top Up' : 'Billing Top Up';
     const formattedDate = this.formatDate(transaction.transaction_date);
 
+    const uniqueKey = `${transaction.ewallet_transaction_id}-${index}`;
     return (
-      <View
-        key={transaction.ewallet_transaction_id}
-        style={styles.billingContainer}>
+      <View key={uniqueKey} style={styles.billingContainer}>
         <Image source={icon} style={styles.topupIcon} />
         <View style={styles.typeContainer}>
           <Text style={styles.contentTitleText}>{title}</Text>
           <Text style={styles.icafeNameText}>{transaction.payment_method}</Text>
-          <Text style={styles.dateText}>{formattedDate}</Text>
+          <Text style={styles.dateText}>
+            {transaction.transaction_time} | {formattedDate}
+          </Text>
         </View>
         <Text style={styles.priceText}>{formattedAmount}</Text>
       </View>
@@ -85,6 +89,8 @@ export class EwalletHistory extends Component {
 
   render() {
     const {transactions, loading, error} = this.state;
+
+    console.log('Transactions in state:', transactions); // Log transactions in state
 
     if (loading) {
       return <ActivityIndicator size="large" color="#0000ff" />;

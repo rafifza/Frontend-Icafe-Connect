@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   Modal,
+  Alert, // Import Alert
 } from 'react-native';
 import axios from 'axios';
 import xIcon from '../../../assets/images/X.png';
@@ -52,14 +53,39 @@ class UnbindAccount extends Component {
   };
 
   unbindAccount = async bindingId => {
+    const {selectedItem} = this.state;
+    if (!selectedItem) return;
+
     try {
       console.log('Binding ID:', bindingId);
+
+      // Dynamically generate the keys for token and username based on the icafe_id
+      const tokenKey = `token${selectedItem.icafe_id}`;
+      const usernameKey = `username${selectedItem.icafe_id}`;
+
+      // Remove the token and username associated with the selected icafe_id
+      await AsyncStorage.removeItem(tokenKey);
+      console.log(`Removed token: ${tokenKey}`);
+
+      await AsyncStorage.removeItem(usernameKey);
+      console.log(`Removed username: ${usernameKey}`);
+
+      // Send the unbind request to the server
       const response = await axios.post(
         `${ip}/bindingaccountpage/unbindAccount`,
         {bindingId},
       );
+
       if (response.status === 201) {
         this.fetchAccounts();
+
+        // Navigate to Account Settings and show alert
+        Alert.alert('Success', 'Account unbound successfully', [
+          {
+            text: 'OK',
+            onPress: () => this.props.navigation.navigate('Account Setting'),
+          },
+        ]);
       } else {
         console.error('Failed to unbind account');
       }

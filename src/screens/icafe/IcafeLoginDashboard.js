@@ -11,11 +11,11 @@ import {
 import axios from 'axios';
 import workHoursIcon from '../../../assets/images/Clock.png';
 import starIcon from '../../../assets/images/Star.png';
-import ip from '../../../ip'; // Assuming this is your backend API endpoint
-import AsyncStorage from '@react-native-async-storage/async-storage'; // If used later
+import ip from '../../../ip';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CommonActions} from '@react-navigation/native';
 
-class IcafeLoginPage extends Component {
+class IcafeLoginPageDashboard extends Component {
   state = {
     username: '',
     password: '',
@@ -49,15 +49,20 @@ class IcafeLoginPage extends Component {
         const token = response.data.token;
         const savedUsername = response.data.user.username;
 
-        // Save the token and username to AsyncStorage with a dynamic key based on icafe_id
-        await AsyncStorage.setItem(`token${data.icafe_id}`, token);
-        await AsyncStorage.setItem(`username${data.icafe_id}`, savedUsername);
+        if (token) {
+          // Save the token and username to AsyncStorage with a dynamic key based on icafe_id
+          await AsyncStorage.setItem(`token${data.icafe_id}`, token);
+        }
+
+        if (savedUsername) {
+          await AsyncStorage.setItem(`username${data.icafe_id}`, savedUsername);
+        }
 
         Alert.alert('Success', 'Login successful');
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{name: 'Search Screen'}],
+            routes: [{name: 'Dashboard'}],
           }),
         );
       } else {
@@ -98,8 +103,6 @@ class IcafeLoginPage extends Component {
         if (savedUsername) {
           await AsyncStorage.setItem(`username${data.icafe_id}`, savedUsername);
         }
-        console.log(token);
-        console.log(savedUsername);
 
         Alert.alert('Success', 'Login successful');
         navigation.dispatch(
@@ -125,7 +128,6 @@ class IcafeLoginPage extends Component {
     }
     return '';
   };
-
   render() {
     const {route, navigation} = this.props;
     const {data} = route.params;
@@ -346,4 +348,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IcafeLoginPage;
+export default IcafeLoginPageDashboard;

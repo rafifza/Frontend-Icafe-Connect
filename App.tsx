@@ -21,7 +21,7 @@ import HomeIcon from './assets/images/Home.png';
 import SearchIcon from './assets/images/Search.png';
 import HistoryIcon from './assets/images/History.png';
 import UserIcon from './assets/images/Fullname-Username.png';
-import IcafePageSearch from './src/screens/icafe/IcafePageSearch';
+import IcafeLoginPageDashboard from './src/screens/icafe/IcafeLoginDashboard';
 import SignInScreen from './src/screens/signin/SignInScreen';
 import ForgotPasswordScreen from './src/screens/forgotpassword/ForgotPasswordScreen';
 import SignUpScreen from './src/screens/signup/SignUpScreen';
@@ -63,9 +63,16 @@ function MyTabs() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={Homepage} />
+      <Tab.Screen
+        name="Home"
+        component={Homepage}
+        options={{ unmountOnBlur: true }} />
       <Tab.Screen name="Search" component={SearchPage} />
-      <Tab.Screen name="History" component={HistoryPage} />
+      <Tab.Screen 
+        name="History" 
+        component={HistoryPage} 
+        options={{ unmountOnBlur: true }} 
+      />
       <Tab.Screen name="User" component={Profile} />
     </Tab.Navigator>
   );
@@ -79,7 +86,7 @@ function Homepage({ navigation }) {
       <Stack.Screen name="Icafe" component={IcafeStack} />
       <Stack.Screen name="Ewallet History" component={EwalletHistory} />
       <Stack.Screen name="Icafe Page" component={IcafePage} />
-      <Stack.Screen name="Icafe Login Page" component={IcafeLoginPage} />
+      <Stack.Screen name="Icafe Login Page Dashboard" component={IcafeLoginPageDashboard} />
       <Stack.Screen name="Ewallet Topup" component={PaymentEwallet} />
     </Stack.Navigator>
   )
@@ -150,18 +157,12 @@ function App() {
     <SafeAreaView style={styles.root}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {isLoggedIn ? (
-            <Stack.Screen name="MainApp" component={MyTabs} />
-          ) : (
-            <>
               <Stack.Screen name="Login" component={SignInScreen} />
               <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
               <Stack.Screen name="Otp" component={Otp} />
               <Stack.Screen name="ResetPassword" component={ResetPassword} />
               <Stack.Screen name="SignUp" component={SignUpScreen} />
               <Stack.Screen name="MainApp" component={MyTabs} />
-            </>
-          )}
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

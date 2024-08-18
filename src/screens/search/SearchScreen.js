@@ -73,7 +73,7 @@ class SearchScreen extends Component {
           data: item,
           username: username,
         });
-        console.log('Navigating to Icafe Page with item:');
+        console.log(item.icafe_id);
       } else {
         this.props.navigation.navigate('Icafe Login Page', {
           data: item,

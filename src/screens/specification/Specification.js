@@ -12,12 +12,14 @@ import headphoneIcon from '../../../assets/images/Headphones.png';
 import axios from 'axios';
 import ip from '../../../ip';
 
-const fetchSpecification = async icafe_detail_id => {
+const fetchSpecification = async (icafe_detail_id, icafe_id) => {
+  console.log(icafe_detail_id, icafe_id);
+
   try {
     const response = await axios.get(
       `${ip}/icafepage/getComputerSpecifications`,
       {
-        params: {icafe_detail_id},
+        params: {icafe_detail_id, icafe_id},
       },
     );
     return response.data;
@@ -43,9 +45,14 @@ export class Specification extends Component {
   async componentDidMount() {
     const {route} = this.props;
     const {icafe_detail_id} = route.params;
+    const icafe_id = route.params.icafe_id;
+    console.log(route.params.icafe_id);
 
     try {
-      const specifications = await fetchSpecification(icafe_detail_id);
+      const specifications = await fetchSpecification(
+        icafe_detail_id,
+        icafe_id,
+      );
       this.setState({specifications, loading: false});
       console.log(specifications);
     } catch (error) {
