@@ -149,7 +149,7 @@ class IcafePage extends Component {
             onPress={() => this.handleNavigation('VVIP')}>
             <Text style={styles.classTitle}>VVIP Class</Text>
             <Text style={styles.billingText}>
-              Sisa Billing: {userBilling.vvip_billing}
+              Remaining Billing: {userBilling.vvip_billing}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -157,7 +157,7 @@ class IcafePage extends Component {
             onPress={() => this.handleNavigation('VIP')}>
             <Text style={styles.classTitle}>VIP Class</Text>
             <Text style={styles.billingText}>
-              Sisa Billing: {userBilling.vip_billing}
+              Remaining Billing: {userBilling.vip_billing}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -165,7 +165,7 @@ class IcafePage extends Component {
             onPress={() => this.handleNavigation('Regular')}>
             <Text style={styles.classTitle}>Regular Class</Text>
             <Text style={styles.billingText}>
-              Sisa Billing: {userBilling.regular_billing}
+              Remaining Billing: {userBilling.regular_billing}
             </Text>
           </TouchableOpacity>
         </View>

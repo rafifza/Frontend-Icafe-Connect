@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  TextInput,
 } from 'react-native';
 import React, {Component} from 'react';
 import ewalletIcon from '../../../assets/images/Wallet.png';
@@ -20,19 +21,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export class Payment extends Component {
   state = {
     selectedPayment: null,
+    phoneNumber: '', // New state variable for phone number
   };
 
   handlePaymentSelection = paymentMethod => {
     this.setState({selectedPayment: paymentMethod});
   };
 
+  handlePhoneNumberChange = phoneNumber => {
+    this.setState({phoneNumber});
+  };
+
   handleContinuePayment = async () => {
-    const {selectedPayment} = this.state;
+    const {selectedPayment, phoneNumber} = this.state;
     const {route, navigation} = this.props;
 
-    const {billing_price_id, data} = route.params;
+    const {billing_price_id} = route.params;
     const icafe_id = route.params.icafe_id;
-    console.log(icafe_id);
 
     const user_id = Number(await AsyncStorage.getItem('userid'));
 
@@ -40,6 +45,14 @@ export class Payment extends Component {
       Alert.alert('Error', 'Please select a payment method.');
       return;
     }
+
+    // Check if phone number is required and valid for gopay
+    if (selectedPayment === 'gopay' && phoneNumber.trim() === '') {
+      Alert.alert('Error', 'Please enter your phone number for GoPay.');
+      return;
+    }
+
+    this.setState({isLoading: true});
 
     try {
       let response;
@@ -52,10 +65,18 @@ export class Payment extends Component {
             icafe_id,
           },
         );
+
+        // Check for 402 status code
+        if (response.status === 402) {
+          console.log('Insufficient e-wallet balance');
+          Alert.alert('Error', 'Insufficient e-wallet balance');
+          return;
+        }
       } else {
         response = await axios.post(`${ip}/paymentpage/topupBilling`, {
           billing_price_id,
           payment_method: selectedPayment,
+          phone_number: selectedPayment === 'gopay' ? phoneNumber : undefined,
           user_id,
           icafe_id,
         });
@@ -63,7 +84,6 @@ export class Payment extends Component {
 
       if (response.status === 200) {
         Alert.alert('Success', 'Payment successful!');
-        // Navigate to another screen if needed
         navigation.navigate('Search Screen', {
           paymentResponse: response.data.paymentResponse,
         });
@@ -75,12 +95,28 @@ export class Payment extends Component {
       }
     } catch (error) {
       console.error('Error in handleContinuePayment:', error.message);
-      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+
+      if (error.response) {
+        const {status, data} = error.response;
+
+        if (status === 402) {
+          Alert.alert('Error', data.error || 'Insufficient e-wallet balance');
+        } else {
+          Alert.alert(
+            'Error',
+            data.error || 'Payment failed. Please try again.',
+          );
+        }
+      } else {
+        Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      this.setState({isLoading: false});
     }
   };
 
   render() {
-    const {selectedPayment} = this.state;
+    const {selectedPayment, phoneNumber} = this.state;
     const {route} = this.props;
     const {price, hours, data, classType} = route.params;
 
@@ -122,6 +158,17 @@ export class Payment extends Component {
               onPress={() => this.handlePaymentSelection('gopay')}>
               <Image source={gopayIcon} style={style.gopayIcon} />
             </TouchableOpacity>
+
+            {selectedPayment === 'gopay' && (
+              <TextInput
+                style={style.phoneNumberInput}
+                placeholder="Phone number"
+                placeholderTextColor="#FFFFFF"
+                keyboardType="phone-pad"
+                value={phoneNumber}
+                onChangeText={this.handlePhoneNumberChange}
+              />
+            )}
           </View>
           <View style={style.continueContainer}>
             <TouchableOpacity
@@ -288,6 +335,14 @@ const style = StyleSheet.create({
     width: 20,
     height: 20,
     marginLeft: 10,
+  },
+  phoneNumberInput: {
+    color: 'white',
+    paddingVertical: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
+    marginVertical: 10,
+    paddingHorizontal: 10,
   },
 });
 

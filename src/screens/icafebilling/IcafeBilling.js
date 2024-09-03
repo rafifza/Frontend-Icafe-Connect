@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import ip from '../../../ip';
@@ -153,7 +154,7 @@ class IcafeBilling extends Component {
               <View style={styles.iconContainer}>
                 <Image source={workHoursIcon} style={styles.workHourIcon} />
                 <Text style={styles.workHourText}>
-                  {this.formatTime(data.open_time)} -
+                  {this.formatTime(data.open_time)} -{' '}
                   {this.formatTime(data.close_time)}
                 </Text>
               </View>
@@ -165,60 +166,62 @@ class IcafeBilling extends Component {
             <Text style={styles.textDescription}>{data.address}</Text>
           </View>
         </View>
-        <View style={styles.pcCategoriesContainer}>
-          <TouchableOpacity
-            style={[
-              styles.billingClassContainer,
-              this.getPriceContainerStyle(classType),
-            ]}
-            onPress={this.navigateToSpecification}>
-            <Text style={styles.pcCategoriesText}>{classType} Class</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.computerSpecificationContainer}
-            onPress={this.navigateToSpecification}>
-            <Text style={styles.computerSpecificationText}>
-              Computer Specifications
-            </Text>
-            <View style={styles.arrowIconContainer}>
-              <Image source={arrowIcon} style={styles.arrowIcon} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.availableComputersContainer}>
-          <Text style={styles.availableComputersTexts}>
-            Computers Available :
-          </Text>
-          <View style={styles.availableComputersTextContainer}>
-            <Text style={styles.availableComputersText}>
-              {icafeData.available_computers}/{icafeData.total_computers}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.pricesContainer}>
-          {prices.map((price, index) => (
-            <View key={index} style={[styles.priceContainer]}>
-              <View>
-                <Text style={styles.priceName}>{price.hours} Hours</Text>
-                <Text style={styles.priceAmount}>
-                  Rp.{price.price.toLocaleString('ID')}
-                </Text>
+        <ScrollView contentContainerStyle={styles.scrollContentContainer}>
+          <View style={styles.pcCategoriesContainer}>
+            <TouchableOpacity
+              style={[
+                styles.billingClassContainer,
+                this.getPriceContainerStyle(classType),
+              ]}
+              onPress={this.navigateToSpecification}>
+              <Text style={styles.pcCategoriesText}>{classType} Class</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.computerSpecificationContainer}
+              onPress={this.navigateToSpecification}>
+              <Text style={styles.computerSpecificationText}>
+                Computer Specifications
+              </Text>
+              <View style={styles.arrowIconContainer}>
+                <Image source={arrowIcon} style={styles.arrowIcon} />
               </View>
-              <TouchableOpacity
-                style={styles.buyButton}
-                onPress={() =>
-                  this.handleBuyButtonPress(
-                    price.price,
-                    price.hours,
-                    price.billing_price_id,
-                    this.state.icafe_id,
-                  )
-                }>
-                <Text style={styles.buyButtonText}>Buy</Text>
-              </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.availableComputersContainer}>
+            <Text style={styles.availableComputersTexts}>
+              Computers Available :
+            </Text>
+            <View style={styles.availableComputersTextContainer}>
+              <Text style={styles.availableComputersText}>
+                {icafeData.available_computers}/{icafeData.total_computers}
+              </Text>
             </View>
-          ))}
-        </View>
+          </View>
+          <View style={styles.pricesContainer}>
+            {prices.map((price, index) => (
+              <View key={index} style={[styles.priceContainer]}>
+                <View>
+                  <Text style={styles.priceName}>{price.hours} Hours</Text>
+                  <Text style={styles.priceAmount}>
+                    Rp.{price.price.toLocaleString('ID')}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.buyButton}
+                  onPress={() =>
+                    this.handleBuyButtonPress(
+                      price.price,
+                      price.hours,
+                      price.billing_price_id,
+                      this.state.icafe_id,
+                    )
+                  }>
+                  <Text style={styles.buyButtonText}>Buy</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -240,9 +243,22 @@ class IcafeBilling extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    backgroundColor: '#00072B',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#00072B',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#00072B',
+  },
+  scrollContentContainer: {
+    alignItems: 'center',
   },
   imageCardContainer: {
     width: '100%',
@@ -409,20 +425,21 @@ const styles = StyleSheet.create({
   regularContainer: {
     backgroundColor: 'rgba(97, 94, 98, 0.15)',
     borderWidth: 3,
-    borderColor: '#C3BBBB',
+    borderColor: '#323232',
     borderRadius: 10,
     padding: 5,
     marginVertical: 10,
   },
   buyButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: '#277CC6',
+    paddingVertical: 5,
     paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
   },
   buyButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontWeight: '700',
   },
 });
 

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
+  ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CommonActions} from '@react-navigation/native';
@@ -117,89 +118,93 @@ export class AccountSetting extends Component {
     const {navigation} = this.props;
     const {isModalVisible, fullname, email} = this.state;
     return (
-      <View style={style.container}>
-        <View style={style.profileContainer}>
-          <Image source={profilPicture} style={style.profilePicture} />
-          <View style={style.textProfileContainer}>
-            <Text style={style.namaText}>{fullname}</Text>
-            <Text style={style.emailText}>{email}</Text>
-            <TouchableOpacity
-              style={style.editProfileContainer}
-              onPress={() => this.props.navigation.navigate('Edit Profile')}>
-              <Text style={style.editProfileText}>Edit profile</Text>
-              <Image source={arrowIcon} style={style.arrowIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={style.settingContainer}>
-          <TouchableOpacity
-            style={style.languageContainer}
-            onPress={() => this.props.navigation.navigate('Change Password')}>
-            <Image source={privacyIcon} style={style.languageIcon} />
-            <Text style={style.privacyText}>Change Password</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={style.languageContainer}
-            onPress={() => this.props.navigation.navigate('Unbind Account')}>
-            <Image source={userIcon} style={style.languageIcon} />
-            <Text style={style.unbindText}>Unbind Account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={style.languageContainer}
-            onPress={() => this.props.navigation.navigate('Help Support')}>
-            <Image source={supportIcon} style={style.languageIcon} />
-            <Text style={style.supportText}>Help and Support</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={style.deleteContainer}
-            onPress={this.toggleModal}>
-            <Text style={style.aboutText}>Delete Account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={style.logoutContainer}
-            onPress={this.handleLogout}>
-            <Text style={style.aboutText}>Sign Out</Text>
-          </TouchableOpacity>
-        </View>
-        <Modal
-          transparent={true}
-          animationType="slide"
-          visible={isModalVisible}
-          onRequestClose={this.toggleModal}>
-          <View style={style.modalContainer}>
-            <View style={style.modalContent}>
-              <Text style={style.modalText}>
-                Are you sure you want to delete your account?
-              </Text>
-              <View style={style.modalButtonContainer}>
-                <TouchableOpacity
-                  style={style.modalButton}
-                  onPress={this.toggleModal}>
-                  <Text style={style.modalButtonText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[style.modalButton, style.modalButtonDisable]}
-                  onPress={() => {
-                    this.toggleModal();
-                    console.log('Account Disabled');
-                  }}>
-                  <Text style={style.modalButtonText}>Disable</Text>
-                </TouchableOpacity>
-              </View>
+      <ScrollView style={style.cont}>
+        <View style={style.container}>
+          <View style={style.profileContainer}>
+            <Image source={profilPicture} style={style.profilePicture} />
+            <View style={style.textProfileContainer}>
+              <Text style={style.namaText}>{fullname}</Text>
+              <Text style={style.emailText}>{email}</Text>
+              <TouchableOpacity
+                style={style.editProfileContainer}
+                onPress={() => this.props.navigation.navigate('Edit Profile')}>
+                <Text style={style.editProfileText}>Edit profile</Text>
+                <Image source={arrowIcon} style={style.arrowIcon} />
+              </TouchableOpacity>
             </View>
           </View>
-        </Modal>
-      </View>
+          <View style={style.settingContainer}>
+            <TouchableOpacity
+              style={style.languageContainer}
+              onPress={() => this.props.navigation.navigate('Change Password')}>
+              <Image source={privacyIcon} style={style.languageIcon} />
+              <Text style={style.privacyText}>Change Password</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.languageContainer}
+              onPress={() => this.props.navigation.navigate('Unbind Account')}>
+              <Image source={userIcon} style={style.languageIcon} />
+              <Text style={style.unbindText}>Unbind Account</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.languageContainer}
+              onPress={() => this.props.navigation.navigate('Help Support')}>
+              <Image source={supportIcon} style={style.languageIcon} />
+              <Text style={style.supportText}>Help and Support</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.deleteContainer}
+              onPress={this.toggleModal}>
+              <Text style={style.aboutText}>Delete Account</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.logoutContainer}
+              onPress={this.handleLogout}>
+              <Text style={style.aboutText}>Sign Out</Text>
+            </TouchableOpacity>
+          </View>
+          <Modal
+            transparent={true}
+            animationType="slide"
+            visible={isModalVisible}
+            onRequestClose={this.toggleModal}>
+            <View style={style.modalContainer}>
+              <View style={style.modalContent}>
+                <Text style={style.modalText}>
+                  Are you sure you want to delete your account?
+                </Text>
+                <View style={style.modalButtonContainer}>
+                  <TouchableOpacity
+                    style={style.modalButton}
+                    onPress={this.toggleModal}>
+                    <Text style={style.modalButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[style.modalButton, style.modalButtonDisable]}
+                    onPress={() => {
+                      this.toggleModal();
+                      console.log('Account Disabled');
+                    }}>
+                    <Text style={style.modalButtonText}>Disable</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      </ScrollView>
     );
   }
 }
 
 const style = StyleSheet.create({
-  container: {
+  cont: {
     flex: 1,
     width: '100%',
-    alignItems: 'center',
     backgroundColor: '#00072B',
+  },
+  container: {
+    alignItems: 'center',
   },
   profileContainer: {
     width: '90%',

@@ -40,6 +40,20 @@ const SignUpScreen = ({navigation}) => {
   };
 
   const handleSignUp = async () => {
+    // Check for empty fields
+    if (
+      !fullName ||
+      !username ||
+      !email ||
+      !phoneNumber ||
+      !password ||
+      !confirmPassword
+    ) {
+      alert('Please fill in all fields!');
+      return;
+    }
+
+    // Check if passwords match
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;
@@ -56,14 +70,16 @@ const SignUpScreen = ({navigation}) => {
 
       if (response.status === 201) {
         alert(response.data);
-        // Navigate to the login screen or home screen
         navigation.navigate('Login');
       } else {
         alert(response.data);
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Something went wrong. Please try again later.');
+      if (error.response && error.response.status === 404) {
+        alert(error.response.data);
+      } else {
+        alert('Something went wrong. Please try again later.');
+      }
     }
   };
 

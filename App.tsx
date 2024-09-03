@@ -83,11 +83,13 @@ function Homepage({ navigation }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Dashboard" component={Dashboard} />
-      <Stack.Screen name="Icafe" component={IcafeStack} />
       <Stack.Screen name="Ewallet History" component={EwalletHistory} />
       <Stack.Screen name="Icafe Page" component={IcafePage} />
       <Stack.Screen name="Icafe Login Page Dashboard" component={IcafeLoginPageDashboard} />
       <Stack.Screen name="Ewallet Topup" component={PaymentEwallet} />
+      <Stack.Screen name="Icafe Billing" component={IcafeBilling} />
+      <Stack.Screen name="Specification" component={Specification} />
+      <Stack.Screen name="Payment" component={Payment} />
     </Stack.Navigator>
   )
 }
@@ -98,6 +100,7 @@ function IcafeStack({ navigation }) {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Icafe Page" component={IcafePage} />
       <Stack.Screen name="Icafe Login" component={IcafeLoginPage} />
+      
     </Stack.Navigator>
   )
 }

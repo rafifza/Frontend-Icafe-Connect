@@ -69,17 +69,27 @@ const SignInScreen = () => {
           Alert.alert('Error', 'Token is null');
         }
       } else {
-        Alert.alert('Error', response.data);
+        Alert.alert('Error', response.data || 'Unknown error occurred');
       }
     } catch (error) {
+      if (error.response && error.response.status === 405) {
+        // Account is not registered
+        Alert.alert('Error', 'Account is not Registered!');
+      } else if (error.response && error.response.status === 404) {
+        // Username/Email or password is wrong
+        Alert.alert('Error', 'Username/Email Or Password is Wrong!');
+      } else {
+        // Other errors
+        Alert.alert('Error', 'Something went wrong. Please try again later.');
+      }
       console.error('Error:', error);
-      Alert.alert('Error', 'Something went wrong. Please try again later.');
     }
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
+        <Image source={Logo} style={styles.logo} />
         <ActivityIndicator size="large" color="#1B9DE2" />
       </View>
     );
